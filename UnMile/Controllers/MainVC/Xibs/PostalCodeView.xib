@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="1yT-qk-Zxt" customClass="PostalCodeView" customModule="UnMile" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="280" height="120"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="85N-CM-VFb" customClass="MyButton" customModule="UnMile" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="65" width="130" height="40"/>
+                    <color key="backgroundColor" red="1" green="0.57637232540000005" blue="0.0" alpha="0.70288420380000005" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="8ZC-SD-e22"/>
+                    </constraints>
+                    <state key="normal" title="   Find Restaurants   ">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vK2-Ff-rht" customClass="MyButton" customModule="UnMile" customModuleProvider="target">
+                    <rect key="frame" x="150" y="65" width="130" height="40"/>
+                    <color key="backgroundColor" red="1" green="0.57637232540000005" blue="0.0" alpha="0.70288420380000005" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="DVO-1e-fWH"/>
+                    </constraints>
+                    <state key="normal" title="Auto Locate Me">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CIP-R5-D38">
+                    <rect key="frame" x="130" y="55" width="20" height="50"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="4BN-Yc-qKc"/>
+                        <constraint firstAttribute="width" constant="20" id="Fok-s5-alq"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ijs-96-G4o">
+                    <rect key="frame" x="0.0" y="15" width="280" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="cTd-PG-nNY"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <state key="normal" title="Enter your postal Code">
+                        <color key="titleColor" red="0.58816933630000001" green="0.58827334639999995" blue="0.58816277979999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                </button>
+            </subviews>
+            <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+            <constraints>
+                <constraint firstItem="85N-CM-VFb" firstAttribute="bottom" secondItem="CIP-R5-D38" secondAttribute="bottom" id="1Kr-sZ-ncb"/>
+                <constraint firstItem="f8M-6N-y62" firstAttribute="trailing" secondItem="Ijs-96-G4o" secondAttribute="trailing" id="GVL-Pa-Lcw"/>
+                <constraint firstItem="CIP-R5-D38" firstAttribute="centerY" secondItem="1yT-qk-Zxt" secondAttribute="centerY" constant="20" id="NwY-Vh-PnT"/>
+                <constraint firstItem="CIP-R5-D38" firstAttribute="leading" secondItem="85N-CM-VFb" secondAttribute="trailing" id="Uli-Ld-pQr"/>
+                <constraint firstItem="vK2-Ff-rht" firstAttribute="leading" secondItem="CIP-R5-D38" secondAttribute="trailing" id="adx-sA-qnn"/>
+                <constraint firstItem="vK2-Ff-rht" firstAttribute="bottom" secondItem="CIP-R5-D38" secondAttribute="bottom" id="bZS-vC-j94"/>
+                <constraint firstItem="85N-CM-VFb" firstAttribute="leading" secondItem="f8M-6N-y62" secondAttribute="leading" id="bkQ-tt-jxS"/>
+                <constraint firstItem="vK2-Ff-rht" firstAttribute="trailing" secondItem="f8M-6N-y62" secondAttribute="trailing" id="hsm-dW-niW"/>
+                <constraint firstItem="CIP-R5-D38" firstAttribute="top" secondItem="Ijs-96-G4o" secondAttribute="bottom" id="say-g3-YMS"/>
+                <constraint firstItem="Ijs-96-G4o" firstAttribute="leading" secondItem="f8M-6N-y62" secondAttribute="leading" id="ugV-YP-zaI"/>
+                <constraint firstItem="CIP-R5-D38" firstAttribute="centerX" secondItem="1yT-qk-Zxt" secondAttribute="centerX" id="wAw-zy-82O"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="f8M-6N-y62"/>
+            <point key="canvasLocation" x="94.400000000000006" y="-29.685157421289357"/>
+        </view>
+    </objects>
+</document>

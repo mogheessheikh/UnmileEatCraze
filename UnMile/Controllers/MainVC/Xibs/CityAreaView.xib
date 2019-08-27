@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="CityAreaView" customModule="UnMile" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="280" height="120"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6ad-Tl-iGJ" customClass="MyButton" customModule="UnMile" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="70" width="130" height="40"/>
+                    <color key="backgroundColor" red="1" green="0.57637232540000005" blue="0.0" alpha="0.70288420380000005" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="idW-Kj-N2g"/>
+                    </constraints>
+                    <state key="normal" title="   Find Restaurants   ">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PQQ-hg-c1Q" customClass="MyButton" customModule="UnMile" customModuleProvider="target">
+                    <rect key="frame" x="150" y="70" width="130" height="40"/>
+                    <color key="backgroundColor" red="1" green="0.57637232540000005" blue="0.0" alpha="0.70288420380000005" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="tjw-ag-MjC"/>
+                    </constraints>
+                    <state key="normal" title="Auto Locate Me">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                </button>
+                <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TNq-T8-gN5">
+                    <rect key="frame" x="150" y="10" width="130" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="c83-sk-xl7"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <state key="normal" title="Select Your Area">
+                        <color key="titleColor" red="0.58816933630000001" green="0.58827334639999995" blue="0.58816277979999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t04-E7-03X">
+                    <rect key="frame" x="130" y="10" width="20" height="100"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="100" id="bV1-ST-2Wz"/>
+                        <constraint firstAttribute="width" constant="20" id="ga1-rj-Mjw"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lNc-a5-loc">
+                    <rect key="frame" x="0.0" y="10" width="130" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="DMO-Th-O4d"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <state key="normal" title="Select Your City">
+                        <color key="titleColor" red="0.58816933630000001" green="0.58827334639999995" blue="0.58816277979999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                </button>
+            </subviews>
+            <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+            <constraints>
+                <constraint firstItem="6ad-Tl-iGJ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="4nU-X2-hSP"/>
+                <constraint firstItem="t04-E7-03X" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="7AC-Ad-E4G"/>
+                <constraint firstItem="PQQ-hg-c1Q" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="AU2-Jx-i71"/>
+                <constraint firstItem="t04-E7-03X" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Nh6-Tz-AUd"/>
+                <constraint firstItem="TNq-T8-gN5" firstAttribute="leading" secondItem="t04-E7-03X" secondAttribute="trailing" id="R7w-Xs-ZKd"/>
+                <constraint firstItem="t04-E7-03X" firstAttribute="leading" secondItem="6ad-Tl-iGJ" secondAttribute="trailing" id="UH0-1D-ew6"/>
+                <constraint firstItem="lNc-a5-loc" firstAttribute="top" secondItem="t04-E7-03X" secondAttribute="top" id="VQk-qB-Qgv"/>
+                <constraint firstItem="TNq-T8-gN5" firstAttribute="top" secondItem="t04-E7-03X" secondAttribute="top" id="Vrv-08-HCc"/>
+                <constraint firstItem="lNc-a5-loc" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="XMd-Kg-tSQ"/>
+                <constraint firstItem="PQQ-hg-c1Q" firstAttribute="leading" secondItem="t04-E7-03X" secondAttribute="trailing" id="YzH-bK-RQW"/>
+                <constraint firstItem="TNq-T8-gN5" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="aWU-qY-j68"/>
+                <constraint firstItem="t04-E7-03X" firstAttribute="leading" secondItem="lNc-a5-loc" secondAttribute="trailing" id="jB8-1f-Ese"/>
+                <constraint firstItem="PQQ-hg-c1Q" firstAttribute="bottom" secondItem="t04-E7-03X" secondAttribute="bottom" id="nwk-s6-8Km"/>
+                <constraint firstItem="6ad-Tl-iGJ" firstAttribute="bottom" secondItem="t04-E7-03X" secondAttribute="bottom" id="pcr-Du-njo"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="areaButton" destination="TNq-T8-gN5" id="Jix-hx-uFQ"/>
+                <outlet property="autoLocateButton" destination="PQQ-hg-c1Q" id="Yjy-WF-OKR"/>
+                <outlet property="cityButton" destination="lNc-a5-loc" id="N4o-zu-M3o"/>
+                <outlet property="findRestaurentsButton" destination="6ad-Tl-iGJ" id="Fa5-39-fZC"/>
+            </connections>
+            <point key="canvasLocation" x="94.400000000000006" y="-29.685157421289357"/>
+        </view>
+    </objects>
+</document>
