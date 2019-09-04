@@ -7,9 +7,13 @@
 //
 
 import UIKit
-
+protocol radio_Check_ButtonDelegate  {
+    func didCheckRadioButton(cell: OptionGroupCell)
+    
+}
 class OptionGroupCell: UITableViewCell {
-
+    @IBOutlet weak var radio_Check_Button: UIButton!
+    var delegate :  radio_Check_ButtonDelegate?
     @IBOutlet weak var lblOptionGroupName: UILabel!
     @IBOutlet weak var lblOptionGroupValue: UILabel!
     override func awakeFromNib() {
@@ -22,5 +26,8 @@ class OptionGroupCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    @IBAction func CheckRadioButtonPressed(_ sender: Any) {
+     delegate?.didCheckRadioButton(cell: self)
+    }
+    
 }

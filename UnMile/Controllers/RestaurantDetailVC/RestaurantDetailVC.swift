@@ -62,6 +62,8 @@ class RestaurantDetailVC: BaseViewController {
         tableView.delegate = self
 
         getBranchDetail()
+        
+    
     }
 
     func getBranchDetail() {
@@ -103,9 +105,8 @@ class RestaurantDetailVC: BaseViewController {
 //    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if(segue.identifier == "optionGroupVC"){
-        
-            let vc = segue.destination as? ItemDetailOptionGroupsVC
+        if (segue.identifier == "newName"){
+            let vc = segue.destination as? NewItemDetailVC
             vc?.product = self.product
         }
     }
@@ -239,7 +240,8 @@ extension RestaurantDetailVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
           product = branchDetails.categories[indexPath.section].products[indexPath.row]
           //saveSelectedProduct(Object: product, key: "selectedProduct")
-          performSegue(withIdentifier: "optionGroupVC", sender: self)
+          //performSegue(withIdentifier: "optionGroupVC", sender: self)
+        performSegue(withIdentifier: "newName", sender: self)
     }
 }
 
@@ -249,7 +251,9 @@ extension RestaurantDetailVC : addItemDelegate{
         
         let indexPath = self.tableView.indexPath(for: cell)
         product = branchDetails.categories[indexPath!.section].products[indexPath!.row]
-        performSegue(withIdentifier: "optionGroupVC", sender: self)
+        //performSegue(withIdentifier: "optionGroupVC", sender: self)
+        performSegue(withIdentifier: "newName", sender: self)
+        
     }
     
     

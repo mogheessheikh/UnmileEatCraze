@@ -84,6 +84,7 @@ class CartVC: BaseViewController{
         
     }
     @IBAction func addMoreItems(_ sender: Any) {
+        
         performSegue(withIdentifier: "Cart2Restaurant", sender: nil)
     }
     
@@ -207,7 +208,7 @@ extension CartVC : UITableViewDataSource, UITableViewDelegate{
                 allItems.remove(at: indexPath.row)
                 self.tblCart.deleteRows(at: [indexPath] , with: .fade)
                 //tblCart.beginUpdates()
-                //tblCart.deleteRows(at: [indexPath] , with: UITableView.RowAnimation.automatic)
+
                 saveItems(allItems: alreadyItems as! [CustomerOrderItem])
                  lblTotalPrice.text = "Grand Total : \(getTotalPriceFromCart())"
                 tblCart.reloadData()

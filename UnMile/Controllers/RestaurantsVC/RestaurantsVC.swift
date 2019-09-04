@@ -41,12 +41,20 @@ class RestaurantsVC: BaseViewController {
             if let loadedCompany = try? decoder.decode(CompanyDetails.self, from: savedCompany) {
                 zoneType = loadedCompany.deliveryZoneType.name
                 let area =  getSavedAreaObject(key: "SavedArea")
-                 title = area.area + "/Restaurants"
+                if(area != nil){
+                    
+                    title = area!.area + "/Restaurants"
+                    
+                    let city = getSavedCityObject(key: "SavedCity")
+                    
+                    getRestaurantsBy(countryId: self.countryId, companyId: "\(loadedCompany.id)" , type: zoneType , city: city.name, area: area!.area, pageNo: self.pageNo)
+                    
+                }
+                else {
+                    
+                    showAlert(title: "Select city / Area", message: "You havn't select City/Area")
+                }
                 
-                let city = getSavedCityObject(key: "SavedCity")
-                
-                getRestaurantsBy(countryId: self.countryId, companyId: "\(loadedCompany.id)" , type: zoneType , city: city.name, area: area.area, pageNo: self.pageNo)
-            
             }
             
             

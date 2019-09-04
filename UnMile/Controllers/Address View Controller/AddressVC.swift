@@ -55,7 +55,7 @@ class AddressVC: BaseViewController {
             
         }
         else{
-            let vc = segue.destination as? CheckOutVC
+            _ = segue.destination as? CheckOutVC
         }
         
     }
@@ -66,7 +66,8 @@ class AddressVC: BaseViewController {
             do{
                print("response")
                 
-            }catch let myJSONError {
+            }
+            catch let myJSONError {
                 print(myJSONError)
                 self.showAlert(title: Strings.error, message: Strings.somethingWentWrong)
             }
@@ -78,11 +79,7 @@ class AddressVC: BaseViewController {
     }
 
     @IBAction func addNewAddress(_ sender: Any) {
-        //performSegue(withIdentifier: "address2addAddress", sender: self)
-//         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-//        let controller = storyboard.instantiateViewController(withIdentifier: "AddAddressVC") as! AddAddressVC
-//        self.present(controller, animated: true, completion: nil)
-       // let initialVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddAddressVC") as! AddAddressVC
+      
         let userAddress = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddAddressVC")
         //let navi =  UINavigationController.init(rootViewController: initialVC)
         self.navigationController?.pushViewController(userAddress, animated: true)

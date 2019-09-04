@@ -222,28 +222,6 @@ class PlaceOrderVC: BaseViewController {
         }
         
         task.resume()
-       // guard let httpBody = try? JSONSerialization.data(withJSONObject: postString, options: []) else { return }
-//       // guard let httpBody = parameter else { return }
-//        request.httpBody = httpBody
-//
-//        let session = URLSession.shared
-//        session.dataTask(with: request) { (data, response, error) in
-//            if let response = response {
-//                print(response)
-//
-//            }
-//
-//
-//            if let data = data {
-//                do {
-//                    let json = try JSONSerialization.jsonObject(with: data, options: [])
-//                    print(json)
-//                } catch {
-//                    print(error)
-//                }
-//            }
-//
-//            }.resume()
 }
     
     func  chargeSurcharge(customerOrder: CustomerOrder,  paymentMethod: [PaymentMethod])-> Double {
@@ -440,9 +418,9 @@ extension PlaceOrderVC: UITableViewDataSource,UITableViewDelegate{
                     fatalError("Unknown cell")
             }
             
-            cell.lblPaymentType.text =  customerOrder.paymentType
+            cell.lblPaymentType.text =  "\(customerOrder.paymentType)"
             cell.lblInstruction.text = "\(customerOrder.specialInstructions)"
-            cell.lblDeliveryTime.text = "minimum 50-75 mints"
+            cell.lblDeliveryTime.text = "minimum 50-70 mints"
             return cell
         }
         else{

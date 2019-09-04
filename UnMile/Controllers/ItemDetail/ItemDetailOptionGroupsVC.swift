@@ -10,7 +10,8 @@ import UIKit
 import Alamofire
 import AlamofireImage
 
-class ItemDetailOptionGroupsVC: BaseViewController {
+class ItemDetailOptionGroupsVC: BaseViewController{
+    
     
     @IBOutlet var itemImage: UIImageView!
     @IBOutlet var productName: UILabel!
@@ -38,20 +39,20 @@ class ItemDetailOptionGroupsVC: BaseViewController {
     var coption: Option!
     @IBOutlet weak var tblOptionGroup: UITableView!
     let cartBag = SSBadgeButton()
+    var selectedIndex : NSIndexPath?
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        subview1.layer.cornerRadius = 5
+        
+        subview1.layer.cornerRadius = 7
         subview1.layer.masksToBounds = true
-        
-        subview2.layer.cornerRadius = 5
+//
+        subview2.layer.cornerRadius = 7
         subview2.layer.masksToBounds = true
-        
-        CartButton.layer.cornerRadius = 5
+//
+        CartButton.layer.cornerRadius = 7
         CartButton.layer.masksToBounds = true
-        
-        print(product.optionGroups)
-        
+
         productName.text = product.name
         orignalPrice = Double((product.price))
         qPrice = orignalPrice
@@ -60,11 +61,11 @@ class ItemDetailOptionGroupsVC: BaseViewController {
         Alamofire.request(product.productPhotoURL ?? "").responseImage { response in
             if let image = response.result.value {
                 self.itemImage.image = image
-                
+
             } else {
                 self.itemImage.image  = UIImage(named: "logo")
             }
-            
+
         }
         let alreadyItems = getAlreadyCartItems()
         cartBag.frame = CGRect(x: 0, y: 0, width: 25, height: 30)
@@ -74,9 +75,14 @@ class ItemDetailOptionGroupsVC: BaseViewController {
         bag = alreadyItems.count
         UserDefaults.standard.set(bag, forKey: "bag")
         cartBag.badge = String(bag)
-        
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: cartBag)]
-        // Do any additional setup after loading the view.
+        
+//        // Do any additional setup after loading the view.
+//
+//        if (product.optionGroups.isEmpty){
+//
+//            tblOptionGroup.isHidden = true
+//        }
     }
     
     @IBAction func cartButtonTapped(_ sender: Any){
@@ -110,6 +116,7 @@ class ItemDetailOptionGroupsVC: BaseViewController {
         //        cCustomerOptionGroup = CustomerOptionGroup.init(id: 0, name:"abc" , identifierName: "abc", listQuantity: 1, minChoice: 1, maxChoice: 2, status: 2, archive: 2, optID: 2, options: [coption])
         
         cProduct = CustomerProduct.init(id: product.id, code: product.code, name: product.name, description: product.description, productPhotoURL: product.productPhotoURL!, price: Int(product!.price), position: product.position, status: product.status, archive: product.archive, optionGroups: [])
+        
         
         // update existing item in cart
         if alreadyItems.contains(where: { $0.product.name == product.name }) {
@@ -159,9 +166,13 @@ class ItemDetailOptionGroupsVC: BaseViewController {
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: cartBag)]
     }
 }
-extension ItemDetailOptionGroupsVC: UITableViewDelegate,UITableViewDataSource{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension ItemDetailOptionGroupsVC:  UITableViewDataSource, UITableViewDelegate {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         return product.optionGroups.count
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return product.optionGroups[section].options.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -170,8 +181,66 @@ extension ItemDetailOptionGroupsVC: UITableViewDelegate,UITableViewDataSource{
             fatalError("Unknown cell")
             
         }
-        cell.lblOptionGroupName.text = product.optionGroups[indexPath.row].identifierName
-        cell.lblOptionGroupValue.text = "\(product.optionGroups[indexPath.row].listQuantity)"
-    return cell
+        cell.lblOptionGroupName.text = product.optionGroups[indexPath.section].options[indexPath.row].name
+        cell.lblOptionGroupValue.text = "\(product.optionGroups[indexPath.section].options[indexPath.row].price)"
+        cell.delegate = self
+        if(product.optionGroups[indexPath.section].maxChoice <= 1)
+        {
+            if (selectedIndex == indexPath as NSIndexPath ) {
+                cell.radio_Check_Button.setImage(UIImage(named: "radio-button-check"),for:UIControl.State.normal)
+            } else {
+                 cell.radio_Check_Button.setImage(UIImage(named: "radio-button-uncheck"),for:UIControl.State.normal)
+            }
+
+            
+        }
+        else{
+            cell.radio_Check_Button.setImage(UIImage(named: "plus"),for:UIControl.State.normal)
+        }
+        return cell
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(product.optionGroups[indexPath.section].maxChoice <= 1)
+        {
+            guard let cell = tableView.cellForRow(at: indexPath) as? OptionGroupCell
+                else {
+                    fatalError("Unknown cell")
+            }
+            cell.radio_Check_Button.setImage(UIImage(named: "radio-button-check"),for:UIControl.State.normal)
+            selectedIndex = indexPath as NSIndexPath
+           tblOptionGroup.reloadData()
+        }
+    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        let headerView = UIView()
+        headerView.frame = CGRect(x: 100, y: 5, width: 200, height: 50)
+        headerView.backgroundColor =  UIColor.initWithHex(hex: "f5ad1d")
+        let label = UILabel()
+        label.frame = CGRect(x: tableView.bounds.size.width / 3  , y: 13, width: tableView.bounds.size.width - 10, height: 24)
+        label.text = product.optionGroups[section].name
+        headerView.addSubview(label)
+    return headerView
+
+}
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+     
+       return 60
     }
 }
+extension ItemDetailOptionGroupsVC: radio_Check_ButtonDelegate{
+    func didCheckRadioButton(cell: OptionGroupCell) {
+        let indexPath = self.tblOptionGroup.indexPath(for: cell)
+        
+        //let indexPath = self.tblCheckOut.indexPathForSelectedRow //optional, to get from any UIButton for example
+        let currentCell = tblOptionGroup.cellForRow(at: indexPath!) as! OptionGroupCell
+        currentCell.radio_Check_Button.setImage(UIImage(named: "radio-button-check"),for:UIControl.State.normal)
+        cell.radio_Check_Button.setImage(UIImage(named: "radio-button-uncheck"),for:UIControl.State.normal)
+    }
+    
+}
+        
+

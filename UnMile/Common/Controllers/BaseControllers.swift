@@ -471,16 +471,19 @@ class BaseViewController: UIViewController {
         else { return [] }
     }
     
-    func getSavedAreaObject(key: String) -> AreaObject {
+    func getSavedAreaObject(key: String) -> AreaObject? {
         
         if let savedArea = UserDefaults.standard.object(forKey: key) as? Data  {
             let decoder = JSONDecoder()
             if let loadedArea = try? decoder.decode(AreaObject.self, from: savedArea) {
                 areaCheck = loadedArea
             }
-            
+             return areaCheck!
         }
-        return areaCheck!
+        else{
+            return nil
+        }
+       
     }
     
     func saveCompanyObject(Object : CompanyDetails , key: String){

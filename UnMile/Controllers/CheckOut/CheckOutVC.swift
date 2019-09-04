@@ -357,7 +357,8 @@ extension CheckOutVC : UITableViewDelegate, UITableViewDataSource{
             oderType = oderType.uppercased()
             print(oderType)
             orderSelectedIndex = indexPath as NSIndexPath
-            tableView.reloadData()
+            tblCheckOut.reloadData()
+            
         }
        else if(indexPath.section == 4 )
         {
