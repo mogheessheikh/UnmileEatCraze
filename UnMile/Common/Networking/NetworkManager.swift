@@ -1050,5 +1050,6 @@ enum Path {
     static let customerUrl               = ServerURLs.devURL + "/customer"
     static let addressUrl                = ServerURLs.devURL + "/address"
     static let transIdUrl                = ServerURLs.devURL + "/transid"
+    static let customerOrderUrl          = ServerURLs.devURL + "/customer-order"
 }
 

@@ -12,6 +12,7 @@ class ContainerVC: BaseViewController {
     
     
     @IBOutlet weak var sideMenuConstraints: NSLayoutConstraint!
+    
     var sideMenuOpen = false
     var menuItems = ["Login","Create Account","Search By Map","Search By Area", "Live Chat","Share","Feed Back" ,"Term and Condition"]
     var menuLogOut = ["LogOut","Create Account","Search By Map","Search By Area", "Live Chat","Share","Feed Back" ,"Term and Condition"]
@@ -83,13 +84,13 @@ extension ContainerVC : UITableViewDataSource, UITableViewDelegate{
      return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
-        
+    return 70
+    
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 { return 70}
+    if section == 0 { return 70}
     
-        return 0
+    return 0
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

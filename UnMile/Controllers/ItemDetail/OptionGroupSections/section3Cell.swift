@@ -7,12 +7,15 @@
 //
 
 import UIKit
-
+protocol radio_checkDelegate {
+    func didCheck_Radio_CheckButton(cell: section3Cell)
+}
 class section3Cell: UITableViewCell {
 
     @IBOutlet weak var radio_check_button: UIButton!
     @IBOutlet weak var optionPrice: UILabel!
     @IBOutlet weak var optionName: UILabel!
+    var delegate : radio_checkDelegate?
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -25,5 +28,6 @@ class section3Cell: UITableViewCell {
     }
     
     @IBAction func radio_check_buttonPressed(_ sender: Any) {
+        delegate?.didCheck_Radio_CheckButton(cell: self)
     }
 }

@@ -41,24 +41,13 @@ class CartVC: BaseViewController{
         addItems.layer.cornerRadius = 7
         checkOut.layer.cornerRadius = 7
         addItems.layer.borderColor = UIColor.green.cgColor
-        
-        
-        
-//        if let itemObject = UserDefaults.standard.object(forKey: "orderItemObject"){
-//            items = itemObject as? OrderItem
-//
-//        }
-//        let cartvc = self.storyboard?.instantiateViewController(withIdentifier: "itemsDetailVC") as! ItemsDetailVC
-//        items = cartvc.orderedItem
-//         print(items.itemName)
-        // Do any additional setup after loading the view.
     }
     override func viewWillAppear(_ animated: Bool) {
         
-       
-       
-        if allItems.count != 0{
+        if allItems.count != 0
+        {
             UserDefaults.standard.set(allItems.count , forKey: "Bag")
+            
         }
         else{
             UserDefaults.standard.removeObject(forKey: "Bag")
@@ -137,6 +126,7 @@ extension CartVC: plusMinusDelegate{
         lblTotalPrice.text = "Grand Total : \(totalPrice)"
         addMoreItems[(indexPath?.row)!].quantity = quantity
         addMoreItems[(indexPath?.row)!].purchaseSubTotal = Int(totalPrice)
+        
         saveItems(allItems: addMoreItems )
     
     }

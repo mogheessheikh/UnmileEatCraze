@@ -60,7 +60,7 @@ class RestaurantDetailVC: BaseViewController {
         title = branch.name
         tableView.dataSource = self
         tableView.delegate = self
-
+        startActivityIndicator()
         getBranchDetail()
         
     
@@ -81,7 +81,7 @@ class RestaurantDetailVC: BaseViewController {
                 
                 self.tableView.reloadData()
                 print(self.branchDetails)
-
+                self.stopActivityIndicator()
             } catch let myJSONError {
 
                 #if DEBUG
@@ -430,7 +430,7 @@ struct Product: Codable {
     let id: Int
     var code, name, description: String
     let productPhotoURL: String?
-    //let promotionCode: String
+    let promotionCode: String
     var price: Double
     var totalPrice: Double?
     var specialInstruction: String?
@@ -441,7 +441,7 @@ struct Product: Codable {
     enum CodingKeys: String, CodingKey {
         case id, code, name, description
         case productPhotoURL = "productPhotoUrl"
-    //case promotionCode
+        case promotionCode
         case price, totalPrice, specialInstruction, quantity, position, status, archive, optionGroups
     }
     
@@ -468,7 +468,7 @@ struct OptionGroup: Codable {
     let name, identifierName: String
     let listQuantity, minChoice, maxChoice, status: Int
     let archive, optID: Int
-    let options: [CuisineType]
+    let options: [Option]
 
     enum CodingKeys: String, CodingKey {
         case id, name, identifierName, listQuantity, minChoice, maxChoice, status, archive

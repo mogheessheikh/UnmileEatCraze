@@ -380,6 +380,7 @@ extension CheckOutVC : UITableViewDelegate, UITableViewDataSource{
 }
 extension CheckOutVC: radioButtonDelelgate{
     func didCheckRadioButton(cell: PaymentMethodCell) {
+        
        let indexPath = self.tblCheckOut.indexPath(for: cell)
         
         //let indexPath = self.tblCheckOut.indexPathForSelectedRow //optional, to get from any UIButton for example

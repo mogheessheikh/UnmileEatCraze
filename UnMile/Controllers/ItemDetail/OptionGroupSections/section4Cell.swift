@@ -7,13 +7,17 @@
 //
 
 import UIKit
-
+protocol itemPlusMinusDelegate {
+    func didTappedAddButton(cell: section4Cell)
+    func didTappedMinusButton(cell: section4Cell)
+}
 class section4Cell: UITableViewCell {
 
     @IBOutlet weak var plus: UIButton!
     @IBOutlet weak var minus: UIButton!
     @IBOutlet weak var subview1: UIView!
     @IBOutlet weak var quantity: UILabel!
+    var delegate : itemPlusMinusDelegate?
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -26,7 +30,9 @@ class section4Cell: UITableViewCell {
     }
     
     @IBAction func minusPressed(_ sender: Any) {
+        delegate?.didTappedMinusButton(cell: self)
     }
     @IBAction func plusPressed(_ sender: Any) {
+        delegate?.didTappedAddButton(cell: self)
     }
 }

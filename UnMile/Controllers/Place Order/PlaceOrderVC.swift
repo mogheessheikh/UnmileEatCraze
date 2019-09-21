@@ -19,7 +19,6 @@ class PlaceOrderVC: BaseViewController {
     var itemID = ""
     var finalsubTotal = 0.0
     var quantity = 0
-    var product: Product!
     var selectedAddress : CustomerOrderAddress!
     var branch: Branch!
     var branchWrapper : BranchWrapperAppList!
@@ -50,12 +49,6 @@ class PlaceOrderVC: BaseViewController {
           paymentMethod = branch.paymentMethods
             
         }
-//        if let savedBranchWapper = UserDefaults.standard.object(forKey: "saveBranchWrapper") as? Data  {
-//            let decoder = JSONDecoder()
-//            branchWrapper = try? decoder.decode(BranchWrapperAppList.self, from: savedBranchWapper)
-//
-//
-//        }
     
         routeArray = ["\(restuarentAddress ?? "")","\(selectedAddress!.customerOrderAddressFields[0].fieldValue + selectedAddress!.customerOrderAddressFields[1].fieldValue + selectedAddress!.customerOrderAddressFields[2].fieldValue + selectedAddress!.customerOrderAddressFields[3].fieldValue)"]
     
@@ -83,10 +76,11 @@ class PlaceOrderVC: BaseViewController {
         let jsonData = try! JSONEncoder().encode(customerOrder.customerOrderItem) //Data
         let jsonArray = try! JSONSerialization.jsonObject(with: jsonData, options: []) as! Array<Dictionary<String, Any>>
         
-        let adjustedJsonArray = NSMutableArray.init()
+        let adjustedCustomerOrderItemArray = NSMutableArray.init()
         
         for aDict in jsonArray{
             let newObj = NSMutableDictionary.init()
+            
             newObj["customerOrderItemOptions"] = aDict["customerOrderItemOptions"]
             newObj["instructions"] = aDict["instructions"]
             newObj["orderItemId"] = aDict["orderItemId"]
@@ -95,10 +89,10 @@ class PlaceOrderVC: BaseViewController {
             newObj["purchaseSubTotal"] = aDict["purchaseSubTotal"]
             newObj["quantity"] = aDict["quantity"]
             
-            adjustedJsonArray.add(newObj)
+            adjustedCustomerOrderItemArray.add(newObj)
             
         }
-        print(adjustedJsonArray)
+        print(adjustedCustomerOrderItemArray)
         let jsontaxData = try! JSONEncoder().encode(customerOrderTax) //Data
         let jsontaxArray = try! JSONSerialization.jsonObject(with: jsontaxData, options: []) as! Array<Dictionary<String, Any>>
         
@@ -126,7 +120,7 @@ class PlaceOrderVC: BaseViewController {
                    "customerId": "\(customerOrder.customerID)",
                    "customerLastName":"\(customerOrder.customerLastName)",
                    "customerOrderAddress":["customerOrderAddressFields":[["fieldName":"addressLine1","fieldValue":"\(selectedAddress.customerOrderAddressFields[0].fieldValue)","label":"\(selectedAddress.customerOrderAddressFields[0].label)"],["fieldName":"addressLine2","fieldValue":"\(selectedAddress.customerOrderAddressFields[1].fieldValue)","label":"\(selectedAddress.customerOrderAddressFields[1].label)"],["fieldName":"city","fieldValue":"\(selectedAddress.customerOrderAddressFields[2].fieldValue)","label":"\(selectedAddress.customerOrderAddressFields[2].label)"],["fieldName":"area","fieldValue":"\(selectedAddress.customerOrderAddressFields[3].fieldValue)","label":"\(selectedAddress.customerOrderAddressFields[3].label)"]]],
-                   "customerOrderItem":  adjustedJsonArray,
+                   "customerOrderItem": adjustedCustomerOrderItemArray,
                    "customerOrderTaxes": adjustedJsontaxArray,
                    "customerPhone":"\(customerOrder.customerPhone)",
                    "customerType":"\(customerOrder.customerType)",
@@ -150,14 +144,18 @@ class PlaceOrderVC: BaseViewController {
                    "companyId": customerOrder.companyID
                    ] as [String : Any]
 
-
-        guard let url = URL(string: "http://35.243.235.232:8082/rest/customer-order/create") else { return }
+        print(postString )
+        guard let url = URL(string: Path.customerOrderUrl + "/create") else { return }
         var request = URLRequest(url: url)
         request.allHTTPHeaderFields = postString as? [String : String]
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         do {
+            let jsoncheck =  try JSONSerialization.data(withJSONObject: postString , options: .prettyPrinted)
+            
+           //getRequst(paramss: postString, path: "http://35.243.235.232:8082/rest/customer-order/create")
+            
             request.httpBody = try JSONSerialization.data(withJSONObject: postString , options: .prettyPrinted)
         } catch let error {
             print(error.localizedDescription)
@@ -178,27 +176,23 @@ class PlaceOrderVC: BaseViewController {
             
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? NSDictionary
-                
-                
                 if let parseJSON = json {
-       
-                        let jsonData = try JSONSerialization.data(withJSONObject: parseJSON, options: .prettyPrinted)
-                        let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
-                        let jsonData1 = encodedObjectJsonString.data(using: .utf8)
-                        var customerOrder = try JSONDecoder().decode(CustomerOrder.self, from: jsonData1!)
-                  
-                        //self.saveCustomerOrder(obj: customerOrder!, key: "savedCustomerOrder" )
                     
-                     DispatchQueue.main.async {
-                       // self.saveCustomerOrder(obj: customerOrder!, key: "savedCustomerOrder" )
-                        //customerOrder  = self.chargeSurcharge(customerOrder: customerOrder, branchPaymentMethod:  self.paymentMethod)
+                    let jsonData = try JSONSerialization.data(withJSONObject: parseJSON, options: .prettyPrinted)
+                    let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
+                    let jsonData1 = encodedObjectJsonString.data(using: .utf8)
+                    let customerOrder = try JSONDecoder().decode(CustomerOrder.self, from: jsonData1!)
+                    
+                    //self.saveCustomerOrder(obj: customerOrder!, key: "savedCustomerOrder" )
+                    
+                    DispatchQueue.main.async {
                         self.saveCustomerOrder(obj: customerOrder, key: "savedCustomerOrder" )
                         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                         let vc : UIViewController = storyboard.instantiateViewController(withIdentifier: "CompleteSummeryVC") as! CompleteSummeryVC
                         self.present(vc, animated: true, completion: nil)
-//                        let next:CompleteSummeryVC = self.storyboard?.instantiateViewController(withIdentifier: "CompleteSummeryVC") as! CompleteSummeryVC
-//                        self.navigationController?.pushViewController(next, animated: true)
-                    
+                        //                        let next:CompleteSummeryVC = self.storyboard?.instantiateViewController(withIdentifier: "CompleteSummeryVC") as! CompleteSummeryVC
+                        //                        self.navigationController?.pushViewController(next, animated: true)
+                        
                         
                         print(self.customerOrder.amount)
                     }
@@ -222,10 +216,28 @@ class PlaceOrderVC: BaseViewController {
         }
         
         task.resume()
-}
-    
+    }
+//    func getRequst(paramss: [String : Any] , path: String){
+//
+//        NetworkManager.getDetails(path: path, params: paramss, success: { (json, isError) in
+//
+//            do {
+//                let jsonData =  try json.rawData()
+//                let customerDetails = try JSONDecoder().decode(CustomerDetail.self, from: jsonData)
+//
+//                print(customerDetails)
+//
+//                self.savedCustomerAddress(obj: customerDetails.addresses, key: "customerAddress")
+//
+//            } catch let myJSONError {
+//                print(myJSONError)
+//                self.showAlert(title: Strings.error, message: Strings.somethingWentWrong)
+//            }
+//
+//        }, failure: (Error) -> Void)
+//    }
     func  chargeSurcharge(customerOrder: CustomerOrder,  paymentMethod: [PaymentMethod])-> Double {
-      
+        
         for paymentmethod:PaymentMethod in paymentMethod{
             
             if(customerOrder.paymentType ==  paymentmethod.paymentType.name) {
