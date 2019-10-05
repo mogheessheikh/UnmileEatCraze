@@ -38,7 +38,10 @@ class AddAddressVC: BaseViewController {
         btnArea.layer.cornerRadius = 7
         btnCity.layer.cornerRadius = 7
         
-        customerCheck = getCustomerObject("savedCustomer")
+        
+        let user = getUserDetail()
+       customerCheck = user.1
+        
         if customerCheck != nil  {
            coustomerId = customerCheck.id
         }
@@ -97,37 +100,119 @@ class AddAddressVC: BaseViewController {
               addAddressToServer()
             }
           
-            self.txtAddress1.text = ""
-            self.txtAddress2.text = ""
+           
            
         }
     }
-    
+//    ["id":0,"isDefault":0,"archive":0,"addressFields":[["id":0,"fieldName":"addressLine1","label":"addressline1","fieldValue":"aaaaaaaaaa"],["id":0,"fieldName":"postCode","label":"postcode","fieldValue":"L3R 9A5"]],"customer":["id":455]]
     func addAddressToServer(){
-        
+        startActivityIndicator()
         let path = URL(string: Path.addressUrl + "/add-address")
-        let parameters = ["id":0,
-                          "isDefault":0,
-                          "archive":0,
-                          "addressFields":[["fieldName":"addressLine1","fieldValue":"\(txtAddress1!.text!)","label":"addressLine1"],["fieldName":"addressLine2","fieldValue":"\(txtAddress2!.text!)","label":"addressLine2"],["fieldName":"city","fieldValue":"\(city!.name)","label":"city"],["fieldName":"area","fieldValue":"\(area!.area)","label":"area"]],
-                           "customer": ["id":customerCheck.id, "customerType": "\(customerCheck.customerType)", "ipAddress": "\(customerCheck.ipAddress)", "internalInfo": "\(customerCheck.internalInfo)", "salutation": "\(customerCheck.salutation)", "phone": "\(customerCheck.phone)", "mobile": "\(customerCheck.mobile)", "firstName": "\(customerCheck.firstName)", "lastName": "\(customerCheck.lastName)", "email": "\(customerCheck.email)", "salt": "\(customerCheck.salt)", "promotionSMS": "\(customerCheck.promotionSMS)", "promotionEmail": "\(customerCheck.promotionEmail)", "registrationDate": customerCheck.registrationDate, "companyID": customerCheck.companyID, "branchID": customerCheck.branchID, "status": customerCheck.status, "addresses": []]
-            ] as [String: Any]
+        let parameters =     ["id":0,
+                              "isDefault":0,
+                              "archive":0,
+                              "addressFields":[["id":0,"fieldName":"addressLine1","fieldValue":"\(txtAddress1!.text!)","label":"addressLine1"],["id":0,"fieldName":"addressLine2","fieldValue":"\(txtAddress2!.text!)","label":"addressLine2"],["id":0,"fieldName":"city","fieldValue":"\(city!.name)","label":"city"],["id":0,"fieldName":"area","fieldValue":"\(area!.area)","label":"area"]],
+                              "customer": ["id":customerCheck.id]
+            ]
+                as [String: Any]
         
-        NetworkManager.postDetails(path: path! , parameters: parameters)
-        
+        var request = URLRequest(url: path!)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else { return }
+        request.httpBody = httpBody
+        let session = URLSession.shared
+        session.dataTask(with: request) { (data, response, error) in
+            if let response = response {
+                print(response)
+            }
+            
+            
+            
+            if let data = data {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data, options: [])as? NSDictionary
+                    let jsonData = try JSONSerialization.data(withJSONObject: json as Any, options: .prettyPrinted)
+                    let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
+                    let jsonData1 = encodedObjectJsonString.data(using: .utf8)
+                   DispatchQueue.main.async {
+                    if let httpResponse = response as? HTTPURLResponse {
+                        print("error \(httpResponse.statusCode)")
+                        
+                        if httpResponse.statusCode == 200{
+                            restResponse = true
+                            self.stopActivityIndicator()
+                            self.txtAddress1.text = ""
+                            self.txtAddress2.text = ""
+                            self.showAlert(title: "Request Completed", message: "")
+                        }
+                        else
+                        {
+                            self.showAlert(title: "Request Decline", message: "Something goes worng")
+                        }
+                    }
+                    }
+                    
+                } catch {
+                    print(error)
+                }
+            }
+            
+            }.resume()
     }
     func updateAddressToServer(){
-        
+        startActivityIndicator()
         let path = URL(string: Path.addressUrl + "/update-address")
         let parameters = ["id": addressId!,
                           "isDefault":0,
                           "archive":0,
                           "addressFields":[["id": fieldId[0],"fieldName":"addressLine1","fieldValue":"\(txtAddress1!.text!)","label":"addressLine1"],["id": fieldId[1],"fieldName":"addressLine2","fieldValue":"\(txtAddress2!.text!)","label":"addressLine2"],["id": fieldId[2],"fieldName":"city","fieldValue":"\(city!.name)","label":"city"],["id": fieldId[3],"fieldName":"area","fieldValue":"\(area!.area)","label":"area"]],
-                          "customer": ["id":customerCheck.id, "customerType": "\(customerCheck.customerType)", "ipAddress": "\(customerCheck.ipAddress)", "internalInfo": "\(customerCheck.internalInfo)", "salutation": "\(customerCheck.salutation)", "phone": "\(customerCheck.phone)", "mobile": "\(customerCheck.mobile)", "firstName": "\(customerCheck.firstName)", "lastName": "\(customerCheck.lastName)", "email": "\(customerCheck.email)", "salt": "\(customerCheck.salt)", "promotionSMS": "\(customerCheck.promotionSMS)", "promotionEmail": "\(customerCheck.promotionEmail)", "registrationDate": customerCheck.registrationDate, "companyID": customerCheck.companyID, "branchID": customerCheck.branchID, "status": customerCheck.status, "addresses": []]
+                          "customer": ["id":customerCheck.id]
             ] as [String: Any]
+        var request = URLRequest(url: path!)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else { return }
+        request.httpBody = httpBody
+        let session = URLSession.shared
+        session.dataTask(with: request) { (data, response, error) in
+            if let response = response {
+                print(response)
+            }
+            if let data = data {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data, options: [])as? NSDictionary
+                    let jsonData = try JSONSerialization.data(withJSONObject: json as Any, options: .prettyPrinted)
+                    let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
+                    let jsonData1 = encodedObjectJsonString.data(using: .utf8)
+                    DispatchQueue.main.async {
+                        if let httpResponse = response as? HTTPURLResponse {
+                            print("error \(httpResponse.statusCode)")
+                            
+                            if httpResponse.statusCode == 200{
+                                restResponse = true
+                                self.stopActivityIndicator()
+                                self.txtAddress1.text = ""
+                                self.txtAddress2.text = ""
+                                self.showAlert(title: "Request Completed", message: "")
+                            }
+                            else
+                            {
+                                self.showAlert(title: "Request Decline", message: "Something goes worng")
+                            }
+                        }
+                    }
+                    
+                } catch {
+                    print(error)
+                }
+            }
+            
+            }.resume()
         
-        NetworkManager.postDetails(path: path! , parameters: parameters)
-        
+       
     }
    
     
@@ -144,7 +229,7 @@ class AddAddressVC: BaseViewController {
         vc.isFor = SearchFor(rawValue: sender.tag)!
         if sender.tag == 0 {
             //searchVC.cityDelegate = self as! SearchVCCityDelegate
-            vc.companyId = 52
+            vc.companyId = companyId
             vc.addressSelection = true
             UserDefaults.standard.removeObject(forKey: "SavedArea")
             btnArea.setTitle("Area", for: .normal)
@@ -160,7 +245,7 @@ class AddAddressVC: BaseViewController {
                     
                   //  searchVC.areaDelegate = self as! SearchVCAreaDelegate
                     vc.cityId = loadedCity.id
-                    vc.companyId = 52
+                    vc.companyId = companyId
                      vc.addressSelection = true
                     self.present(vc, animated: true, completion: nil)
                    // self.navigationController?.pushViewController(vc, animated: true)

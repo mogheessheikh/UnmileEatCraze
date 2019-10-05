@@ -37,6 +37,7 @@ class CartVC: BaseViewController{
         allItems = getAlreadyCartItems()
         subTotal = getTotalPriceFromCart()
         lblTotalPrice.text = "Grand Total : \(subTotal)"
+        addItems.isHidden = true
         addItems.layer.borderWidth = 1
         addItems.layer.cornerRadius = 7
         checkOut.layer.cornerRadius = 7
@@ -65,8 +66,7 @@ class CartVC: BaseViewController{
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "cart2checkout"{
-            
-            
+ 
             let checkOut = segue.destination as? CheckOutVC
             checkOut?.totalprice = totalPrice
         }
@@ -181,7 +181,7 @@ extension CartVC : UITableViewDataSource, UITableViewDelegate{
             }
         }
         cell.ProductName.text = items.product.name//itemName
-        cell.TotalPrice.text = "Total Price:\(items.product.price * (items.quantity!))"//String(items.subTotal)//
+        cell.TotalPrice.text = "Total Price:\(items.purchaseSubTotal ?? 0 * (items.quantity!))"//String(items.subTotal)//
         cell.SpecialInstruction.text = "Special Instructions:\(items.instructions ?? "No Instruction")"//items.instruction//
         cell.Quantity.text = " \(items.quantity ?? 1)"
         

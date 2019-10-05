@@ -139,7 +139,6 @@ class MainVC: BaseViewController {
         
     }
     @IBAction func sideMenuTapped(_ sender: Any) {
-        print("Toogle Side Menu")
         present(SideMenuManager.default.menuLeftNavigationController!, animated: true, completion: nil)
     }
     @objc func loadSearchVC(with sender: UIButton) {

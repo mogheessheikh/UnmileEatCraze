@@ -191,7 +191,7 @@ extension SearchVC: UITableViewDataSource, UITableViewDelegate {
                     saveCityObject(Object: city, key: "SavedCity")
                 }
                 dismiss(animated: true, completion: nil)
-                //self.navigationController?.popViewController(animated: true)
+                self.navigationController?.popViewController(animated: true)
             } else {
                 let city = cities[indexPath.row]
                 cityDelegate?.setCity(with: city)
@@ -206,7 +206,7 @@ extension SearchVC: UITableViewDataSource, UITableViewDelegate {
                     saveCityObject(Object: city, key: "SavedCity")
                 }
                 dismiss(animated: true, completion: nil)
-                // self.navigationController?.popViewController(animated: true)
+                self.navigationController?.popViewController(animated: true)
             }
 
         case .area:
@@ -224,7 +224,7 @@ extension SearchVC: UITableViewDataSource, UITableViewDelegate {
                 }
                 
                 dismiss(animated: true, completion: nil)
-               // self.navigationController?.popViewController(animated: true)
+               self.navigationController?.popViewController(animated: true)
             } else {
                 let area = areas[indexPath.row]
                 areaDelegate?.setArea(with: area)
@@ -239,7 +239,7 @@ extension SearchVC: UITableViewDataSource, UITableViewDelegate {
                     saveAreaObject(Object: area, key: "SavedArea")
                 }
                  dismiss(animated: true, completion: nil)
-                //self.navigationController?.popViewController(animated: true)
+                self.navigationController?.popViewController(animated: true)
             }
         }
     }

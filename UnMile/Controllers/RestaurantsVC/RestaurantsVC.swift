@@ -14,6 +14,7 @@ class RestaurantsVC: BaseViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var tblRestaurant: UITableView!
     
     var companyId = 0
     var countryId = "7"
@@ -136,6 +137,7 @@ extension RestaurantsVC: UISearchBarDelegate {
         if !didTapDeleteKey && searchText.isEmpty {
             self.pageNo = "1"
             getRestaurantsBy(countryId: self.countryId, companyId: "\(self.companyId)" , type: self.companyDetails.deliveryZoneType.name, city:self.city, area: self.area, pageNo: self.pageNo)
+            
         }
 
         didTapDeleteKey = false

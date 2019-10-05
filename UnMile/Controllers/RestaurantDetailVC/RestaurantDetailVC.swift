@@ -255,9 +255,6 @@ extension RestaurantDetailVC : addItemDelegate{
         performSegue(withIdentifier: "newName", sender: self)
         
     }
-    
-    
-    
 }
 
 struct BranchDetailsResponse: Codable {
@@ -279,7 +276,7 @@ struct Branch: Codable {
     let name, urlPath, phone, fax: String
     let postCode, addressLine1, addressLine2, town: String
     let city, county, country: String
-    let locationWebLogoURL: String
+    let locationWebLogoURL: String?
     let emailOrder, emailClient1, emailClient2, emailClient3: String
     //    let emailClientCC, smsClient: String
     let orderConfirmation, clientSendSMS, clientSendMail, clientSendFax: Int
@@ -430,7 +427,7 @@ struct Product: Codable {
     let id: Int
     var code, name, description: String
     let productPhotoURL: String?
-    let promotionCode: String
+    let promotionCode: String?
     var price: Double
     var totalPrice: Double?
     var specialInstruction: String?

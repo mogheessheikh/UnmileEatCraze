@@ -11,7 +11,7 @@ import UIKit
 class AddressVC: BaseViewController {
 
     var totalAddress : [Address]!
-    var addressList : [Address]!
+    var addressList : [Address]?
 
     
     var addressFields = [AddressField]()
@@ -28,18 +28,60 @@ class AddressVC: BaseViewController {
 
         // Do any additional setup after loading the view.]
         fieldId.reserveCapacity(4)
+      
+       getuserAddress()
         
-        totalAddress  = getSavedCustomerAddress(key: "customerAddress")
-            
-        addressList = totalAddress.filter { $0.archive == 0 }
      
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        //`totalAddress = getAlreadyAddress()
-         self.getUserDetail()
-        addressList = totalAddress.filter { $0.archive == 0 }
-        tblAddress.reloadData()
+        
+        getuserAddress()
+       
+        
+    }
+    
+    func getuserAddress() {
+        self.startActivityIndicator()
+        if let Id = UserDefaults.standard.object(forKey: "customerId") as? Int{
+            customerId = Id
+            let path = URL(string: Path.customerUrl + "/\(customerId)")
+            let session = URLSession.shared
+            let task = session.dataTask(with: path!) { data, response, error in
+                print("Task completed")
+                
+                guard data != nil && error == nil else {
+                    print(error?.localizedDescription)
+                    return
+                }
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? NSDictionary
+                    if let parseJSON = json {
+                        
+                        let jsonData = try JSONSerialization.data(withJSONObject: parseJSON, options: .prettyPrinted)
+                        let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
+                        let jsonData1 = encodedObjectJsonString.data(using: .utf8)
+                        let customer = try JSONDecoder().decode(CustomerDetail.self, from: jsonData1!)
+                       
+                        DispatchQueue.main.async {
+                            self.totalAddress = customer.addresses
+                            if self.totalAddress != nil{
+                                
+                                self.addressList = self.totalAddress.filter { $0.archive == 0 }
+                            }
+                            self.tblAddress.reloadData()
+                            self.stopActivityIndicator()
+                        }
+                        
+                    }
+                    
+                } catch let parseError as NSError {
+                    print("JSON Error \(parseError.localizedDescription)")
+                }
+            }
+            
+            task.resume()
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -88,7 +130,7 @@ class AddressVC: BaseViewController {
 }
 extension AddressVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return addressList.count
+        return addressList?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -99,11 +141,11 @@ extension AddressVC: UITableViewDelegate, UITableViewDataSource{
         
         for i in 0...3
             {
-                if(addressList[indexPath.row].addressFields[i].label == "addressLine1" || addressList[indexPath.row].addressFields[i].label == "addressLine2"){
-                     customerAddress += addressList[indexPath.row].addressFields[i].fieldValue
+                if(addressList?[indexPath.row].addressFields[i].label == "addressLine1" || addressList![indexPath.row].addressFields[i].label == "addressLine2"){
+                    customerAddress += (addressList?[indexPath.row].addressFields[i].fieldValue)!
                 }
-               else if(addressList[indexPath.row].addressFields[i].label == "city" || addressList[indexPath.row].addressFields[i].label == "area"){
-                    cityArea += addressList[indexPath.row].addressFields[i].fieldValue
+                else if(addressList?[indexPath.row].addressFields[i].label == "city" || addressList![indexPath.row].addressFields[i].label == "area"){
+                    cityArea += (addressList?[indexPath.row].addressFields[i].fieldValue)!
                     
                 }
            
@@ -129,7 +171,7 @@ extension AddressVC: UITableViewDelegate, UITableViewDataSource{
         if(editingStyle == .delete){
             let alreadyAddress = addressList
             if (alreadyAddress?.count != 0){
-                deleteAddress(addressId: addressList[indexPath.row].id)
+                deleteAddress(addressId: (addressList?[indexPath.row].id)!)
                 totalAddress.remove(at: indexPath.row)
                 self.tblAddress.deleteRows(at: [indexPath] , with: .fade)
                 tblAddress.reloadData()
@@ -141,13 +183,13 @@ extension AddressVC: UITableViewDelegate, UITableViewDataSource{
 extension AddressVC : editAddressDelegate{
     func didTappedEdit(cell: AddressTableViewCell) {
     let indexPath = self.tblAddress.indexPath(for: cell)
-        currentAddress = addressList[(indexPath?.row)!]
+        currentAddress = addressList?[(indexPath?.row)!]
         edit = true
         fieldId.removeAll()
         for field in 0...3{
-            fieldId.append(addressList[(indexPath?.row)!].addressFields[field].id)
+            fieldId.append((addressList?[(indexPath?.row)!].addressFields[field].id)!)
         }
-        addressId = addressList[(indexPath?.row)!].id
+        addressId = (addressList?[(indexPath?.row)!].id)!
         //performSegue(withIdentifier: "address2addAddress", sender: self)
         let userAddress = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddAddressVC") as! AddAddressVC
         //let navi =  UINavigationController.init(rootViewController: initialVC)

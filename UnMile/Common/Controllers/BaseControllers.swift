@@ -15,11 +15,12 @@ class BaseViewController: UIViewController {
     var areaCheck: AreaObject?
     var branchCheck: BranchWrapperAppList?
     var customerCheck: CustomerDetail!
+    var companyCheck: CompanyDetails!
     var currentAddress : Address!
     var address: AddressField?
     var totalPrice = 0.0
     var saveCustomerAddress : [Address]!
-   
+    private var customerAddressDetails : [Address]!
     let activityIndicatorView:UIActivityIndicatorView = UIActivityIndicatorView()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +42,17 @@ class BaseViewController: UIViewController {
 //        SVProgressHUD.show()
 //    }
 
+    func showToast(controller: UIViewController , message: String , seconds: Double){
+        
+        
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.view.backgroundColor = UIColor.black
+        alert.view.alpha = 0.6
+        alert.view.layer.cornerRadius = 16
+        DispatchQueue.main.asyncAfter(wallDeadline: DispatchWallTime.now() + seconds){
+            alert.dismiss(animated: true)
+        }
+    }
     func showError() {
         showAlert(title: Strings.error, message: Strings.somethingWentWrong)
     }
@@ -82,7 +94,9 @@ class BaseViewController: UIViewController {
             alreadyItems.removeAllObjects()
             self.saveItems(allItems: alreadyItems as! [CustomerOrderItem])
             UserDefaults.standard.removeObject(forKey: "SavedBranch")
-            self.dismiss(animated: true, completion: nil)
+            UserDefaults.standard.removeObject(forKey:"branchAddress")
+                self.dismiss(animated: true, completion: nil)
+            
             }
         }))
         
@@ -113,49 +127,22 @@ class BaseViewController: UIViewController {
         
     }
     
-    func orderPlacedAlert(title: String , message: String){
+    func orderPlaceAlert(title: String , message: String){
         
-        let deleteAlert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         
-        deleteAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+        let orderAlert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        
+        orderAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
             
-                
-                let path = Path.companyUrl + "\(companyId)"
-                
-                NetworkManager.getDetails(path: path, params: nil, success: { (json, isError) in
-                    
-                    do {
-                        let jsonData =  try json.rawData()
-                        let companyDetails = try JSONDecoder().decode(CompanyDetails.self, from: jsonData)
-                        print(companyDetails)
-                        
-                        UIView.animate(withDuration: 1, delay: 0, options: .curveEaseInOut, animations: {
-                           // self.verticalCenterConstraint.constant = (UIScreen.main.bounds.height/2 - 100) - (180+216)
-                           // self.view.layoutIfNeeded()
-                            self.activityIndicatorView.isHidden = true
-                        }, completion: nil)
-                        
-                        if let tabbarVC = Storyboard.main.instantiateViewController(withIdentifier: "TabbarController") as? UITabBarController,
-                            let nvc = tabbarVC.viewControllers?[0] as? UINavigationController,
-                            let mainVC = nvc.viewControllers[0] as? MainVC {
-                            mainVC.companyDetails = companyDetails
-                            mainVC.deliveryZoneType = companyDetails.deliveryZoneType.name //"POSTALCODE"
-                            
-                            UIApplication.shared.keyWindow!.replaceRootViewControllerWith(tabbarVC, animated: true, completion: nil)
-                        }
-                        
-                    } catch let myJSONError {
-                        print(myJSONError)
-                        self.showAlert(title: Strings.error, message: Strings.somethingWentWrong)
-                    }
-                    
-                }) { (error) in
-                    //self.dismissHUD()
-                    self.showAlert(title: Strings.error, message: error.localizedDescription)
-                }
-            
+            let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc : UIViewController = storyboard.instantiateViewController(withIdentifier: "CompleteSummeryVC") as! CompleteSummeryVC
+                self.present(vc, animated: true, completion: nil)
         }))
+        
+        present(orderAlert, animated: true, completion: nil)
+        
     }
+    
     
     
     func hideNavigationBar(){
@@ -206,10 +193,10 @@ class BaseViewController: UIViewController {
         return prodsArray
     }
     func getAlreadyAddress() -> [Address]  {
-        
+
         let docsURL = FileManager.documentsURL
         let docsFileURL = docsURL.appendingPathComponent("Address.json")
-        
+
         let data = try! Data(contentsOf: docsFileURL, options: [])
         if JSONSerialization.isValidJSONObject(data) {
             print("Valid Json")
@@ -219,133 +206,175 @@ class BaseViewController: UIViewController {
         let jsonResult = try? JSONSerialization.jsonObject(with: data, options: [])
         let jsonArray = jsonResult as! [NSDictionary]
         var addressArray = NSMutableArray.init() as! [Address]
-        
+
         for anItem in jsonArray{
-            
+
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: anItem, options: .prettyPrinted)
                 // here "jsonData" is the dictionary encoded in JSON data
                 let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
                 let jsonData1 = encodedObjectJsonString.data(using: .utf8)
-                
+
                 let itemBac = try? JSONDecoder().decode(Address.self, from: jsonData1!)
-                
+
                 //totalPrice += (itemBac?.totalPrice) ?? (itemBac?.price)!
-                
-                
+
+
                 addressArray.append(itemBac!)
-                
-                
+
+
             } catch {
                 print(error.localizedDescription)
             }
         }
-        
+
         return addressArray
     }
-    func getUserDetail(){
-        
-        if let  Id = UserDefaults.standard.object(forKey: "customerId") as? Int{
+    
+    
+    func getUserDetail() -> ([Address]?,CustomerDetail?){
+        self.startActivityIndicator()
+        if let Id = UserDefaults.standard.object(forKey: "customerId") as? Int{
+            customerId = Id
+         let path = URL(string: Path.customerUrl + "/\(customerId)")
+        let session = URLSession.shared
+        let task = session.dataTask(with: path!) { data, response, error in
+            print("Task completed")
             
-        customerId = Id
-        
-            
-            let path = Path.customerUrl + "/\(customerId)"
-            
-            NetworkManager.getDetails(path: path, params: nil, success: { (json, isError) in
+            guard data != nil && error == nil else {
+                print(error?.localizedDescription)
+                return
+            }
+            do {
+              let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? NSDictionary
+                    if let parseJSON = json {
+                        
+                        let jsonData = try JSONSerialization.data(withJSONObject: parseJSON, options: .prettyPrinted)
+                        let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
+                        let jsonData1 = encodedObjectJsonString.data(using: .utf8)
+                        self.customerCheck = try JSONDecoder().decode(CustomerDetail.self, from: jsonData1!)
+                        self.saveCustomerObj(obj: self.customerCheck, key: "SavedCustomer")
+                        print(self.customerCheck)
+                        self.customerAddressDetails = self.customerCheck.addresses
+                        self.saveCustomerAddress(obj: self.customerAddressDetails, key: "SavedAddress")
+                        
+                        DispatchQueue.main.async {
+                           
+                            self.stopActivityIndicator()
+                        }
+                        
+                    }
                 
-                do {
-                    let jsonData =  try json.rawData()
-                    let customerDetails = try JSONDecoder().decode(CustomerDetail.self, from: jsonData)
-                    
-                    print(customerDetails)
-                    
-                    self.savedCustomerAddress(obj: customerDetails.addresses, key: "customerAddress")
-                    
-                } catch let myJSONError {
-                    print(myJSONError)
-                    self.showAlert(title: Strings.error, message: Strings.somethingWentWrong)
-                }
-                
-            }) { (error) in
-                //self.dismissHUD()
-                self.showAlert(title: Strings.error, message: error.localizedDescription)
+            } catch let parseError as NSError {
+                print("JSON Error \(parseError.localizedDescription)")
             }
         }
-        else{
-            
-            print ("user is not logedin")
-        }
-    }
-    func saveItems(allItems : [CustomerOrderItem])  {
         
+        task.resume()
+        }
+    return (customerAddressDetails,customerCheck)
+    }
+//    func getUserDetail() -> ([Address]?,CustomerDetail?){
+//
+//        if let  Id = UserDefaults.standard.object(forKey: "customerId") as? Int{
+//            customerId = Id
+//            let path = Path.customerUrl + "/\(customerId)"
+//
+//            NetworkManager.getDetails(path: path, params: nil, success: { (json, isError) in
+//
+//                do {
+//                    let jsonData =  try json.rawData()
+//                    self.customerCheck = try JSONDecoder().decode(CustomerDetail.self, from: jsonData)
+//                    self.saveCustomerObj(obj: self.customerCheck, key: "SavedCustomer")
+//                    print(self.customerCheck)
+//                    self.customerAddressDetails = self.customerCheck.addresses
+//                    self.saveCustomerAddress(obj: self.customerAddressDetails, key: "SavedAddress")
+//                } catch let myJSONError {
+//                    print(myJSONError)
+//                    self.showAlert(title: Strings.error, message: Strings.somethingWentWrong)
+//                }
+//
+//            }) { (error) in
+//                //self.dismissHUD()
+//                self.showAlert(title: Strings.error, message: error.localizedDescription)
+//            }
+//        }
+//        else{
+//
+//            print ("user is not logedin")
+//        }
+//
+//        return (customerAddressDetails,customerCheck)
+//    }
+    func saveItems(allItems : [CustomerOrderItem])  {
+
         let docsURL = FileManager.documentsURL
         let docsFileURL = docsURL.appendingPathComponent("cart.json")
-        
+
         let encodedObject = try? JSONEncoder().encode(allItems)
         let encodedObjectJsonString = String(data: encodedObject!, encoding: .utf8)
         let jsonData = encodedObjectJsonString!.data(using: .utf8)
-        
-        
+
+
         do {
             try FileManager.default.removeItem(at: docsFileURL)
         } catch let error as NSError {
             print("Error: \(error.domain)")
         }
-        
+
         let bundlePath = Bundle.main.url(forResource: "cart", withExtension: "json")
         FileManager.default.copyItemFromURL(urlPath: bundlePath!, toURL: docsFileURL)
-        
-        
-        
-        
+
+
+
+
         if let file = FileHandle(forWritingAtPath:docsFileURL.path) {
             file.write(jsonData!)
             print("wrote")
         }
-        
+
         let test = getAlreadyCartItems()
         print(String.init(format: "count after adding item is %i", test.count))
-        
-        
+
+
         //  let itemBac = try? JSONDecoder().decode(Product.self, from: jsonData)
-        
-        
+
+
     }
     func saveAddress(allAddress : [Address])  {
-        
+
         let docsURL = FileManager.documentsURL
         let docsFileURL = docsURL.appendingPathComponent("Address.json")
-        
+
         let encodedObject = try? JSONEncoder().encode(allAddress)
         let encodedObjectJsonString = String(data: encodedObject!, encoding: .utf8)
         let jsonData = encodedObjectJsonString!.data(using: .utf8)
-        
-        
+
+
         do {
             try FileManager.default.removeItem(at: docsFileURL)
         } catch let error as NSError {
             print("Error: \(error.domain)")
         }
-        
+
         let bundlePath = Bundle.main.url(forResource: "Address", withExtension: "json")
         FileManager.default.copyItemFromURL(urlPath: bundlePath!, toURL: docsFileURL)
-        
-        
-        
-        
+
+
+
+
         if let file = FileHandle(forWritingAtPath:docsFileURL.path) {
             file.write(jsonData!)
             print("wrote")
         }
-        
+
         let test = getAlreadyAddress()
         print(String.init(format: "count after adding item is %i", test.count))
-        
-        
+
+
         //  let itemBac = try? JSONDecoder().decode(Product.self, from: jsonData)
-        
-        
+
+
     }
     
     func getTotalPriceFromCart() -> Double  {
@@ -371,7 +400,7 @@ class BaseViewController: UIViewController {
                 
                 let itemBac = try? JSONDecoder().decode(CustomerOrderItem.self, from: jsonData1!)
                 
-                totalPrice += (Double((itemBac?.product.price)!) * (Double((itemBac?.quantity)!)))
+                totalPrice += (Double((itemBac?.purchaseSubTotal)!) * (Double((itemBac?.quantity)!)))
                 
                 
             } catch {
@@ -403,7 +432,7 @@ class BaseViewController: UIViewController {
             defaults.set(encoded, forKey: key)
         }
     }
-    func savedCustomerAddress(obj: [Address], key: String) {
+    func saveCustomerAddress(obj: [Address], key: String) {
         
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(obj) {
@@ -459,16 +488,16 @@ class BaseViewController: UIViewController {
         }
         return cityCheck!
     }
-    func getSavedCustomerAddress(key: String) -> [Address] {
+    func getSavedCustomerAddress(key: String) -> [Address]? {
         
         if let savedCity = UserDefaults.standard.object(forKey: key) as? Data  {
             let decoder = JSONDecoder()
             if let loadedCity = try? decoder.decode([Address].self, from: savedCity) {
-                saveCustomerAddress = loadedCity
+                self.saveCustomerAddress = loadedCity
             }
-            return saveCustomerAddress
+            return self.saveCustomerAddress
         }
-        else { return [] }
+        else { return nil }
     }
     
     func getSavedAreaObject(key: String) -> AreaObject? {
@@ -541,7 +570,7 @@ class BaseViewController: UIViewController {
         return branchCheck!
     }
     
-    func getCustomerObject(_ key:String)-> CustomerDetail
+     func getCustomerObject(_ key:String)-> CustomerDetail?
     {
         
         if let savedCustomer = UserDefaults.standard.object(forKey: key) as? Data  {
@@ -551,6 +580,17 @@ class BaseViewController: UIViewController {
             }
         }
         return customerCheck
+    }
+    func getCompanyObject(_ key:String)-> CompanyDetails
+    {
+        
+        if let savedCustomer = UserDefaults.standard.object(forKey: key) as? Data  {
+            let decoder = JSONDecoder()
+            if let loadedCompany = try? decoder.decode(CompanyDetails.self, from: savedCustomer) {
+                companyCheck = loadedCompany
+            }
+        }
+        return companyCheck
     }
 }
 

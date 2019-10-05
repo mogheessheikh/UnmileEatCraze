@@ -42,6 +42,7 @@ class CheckOutVC: BaseViewController {
     var branchId = 0
     var radioControllerChoice : SSRadioButtonsController = SSRadioButtonsController()
     var radioControllerDip : SSRadioButtonsController = SSRadioButtonsController()
+    var customer : CustomerDetail!
     var selectedArray : [IndexPath] = [IndexPath]()
     override func viewDidLoad() {
         
@@ -49,37 +50,28 @@ class CheckOutVC: BaseViewController {
         
         orderDate = currentDateTime()
         orderTime = currentTime()
-       transId  = getTransId()
+        transId  = getTransId()
         customerOrderItem = getAlreadyCartItems()
         subTotal = getTotalPriceFromCart()
-        
+        getUser()
+       
         if let savedBranch = UserDefaults.standard.object(forKey: "branchAddress") as? Data  {
             let decoder = JSONDecoder()
             if let loadedBranchAddress = try? decoder.decode(Branch.self, from: savedBranch) {
              branchId = loadedBranchAddress.id
             }
         }
+    
         
-        customerCheck = getCustomerObject("savedCustomer")
-      if customerCheck != nil  {
-            userName = customerCheck.firstName
-            userEmail = customerCheck.email
-            userPhone = customerCheck.phone
-        userArray.append(userName)
-        userArray.append(userEmail)
-        userArray.append(userPhone)
-        }
-      
         checkOutButton.layer.cornerRadius = 7
         checkOutButton.layer.borderWidth = 2
-       
-        
         tblCheckOut.register(UINib(nibName: "OrderType", bundle: Bundle.main), forCellReuseIdentifier: "odercell")
         tblCheckOut.register(UINib(nibName: "DeliveryAddress", bundle: Bundle.main), forCellReuseIdentifier: "deliverycell")
         tblCheckOut.register(UINib(nibName: "SpecialInstruction", bundle: Bundle.main), forCellReuseIdentifier: "instructioncell")
         tblCheckOut.register(UINib(nibName: "PaymentMethodCell", bundle: Bundle.main), forCellReuseIdentifier: "paymentcell")
         tblCheckOut.register(UINib(nibName: "PromoCodeCell", bundle: Bundle.main), forCellReuseIdentifier: "promocell")
-        if let savedBranch = UserDefaults.standard.object(forKey: "SavedBranch") as? Data  {
+       
+            if let savedBranch = UserDefaults.standard.object(forKey: "SavedBranch") as? Data  {
             let decoder = JSONDecoder()
             if let loadedCity = try? decoder.decode(BranchWrapperAppList.self, from: savedBranch) {
                 branch = loadedCity
@@ -99,17 +91,18 @@ class CheckOutVC: BaseViewController {
     }
     
     @IBAction func goToSummary(_ sender: Any) {
-        if (selectedAddress == nil)
+        if (selectedAddress == nil )
         {
             showAlert(title: "Address is empty", message: "Select Delivery Address")
         }
+        else if (paymentType == "" || oderType == ""){
+            
+            showAlert(title: "Selection Missing", message: "Must select all selection")
+        }
         else{
+        
             
-            
-            //CustomerOrderAddress.init(id: 0, addressID: selectedAddress.id, customerOrderAddressFields: )
-            //customerOrderAddresss =
-            
-            customerOrder = CustomerOrder.init(id: 0, customerType: customerCheck.customerType, transID: transId, ipAddress: customerCheck.ipAddress, orderDate: orderDate, specialInstructions: specialInstruction, customerPhone: customerCheck.phone, customerFirstName: customerCheck.firstName, customerLastName: customerCheck.lastName, orderStatus: "PENDING", billingStatus: "false", printingStatus: "false", creditStatus: "false", orderType: oderType, paymentType: paymentType, orderTime: "ASAP (Around 75 Minutes)", promoCode: "false", sitePreference: "false", paymentGateway: "false", paymentGatewayReference: "false", orderConfirmationStatus: "PENDING", orderConfirmationStatusMessage: "AUTOCONFIRMED", deliveryCharge: 0, surCharge: 0.0, amount: subTotal, subTotal: subTotal, orderDiscount: 0.0, promoCodeDiscount: 0.0, orderCredit: "false", customerID: customerCheck.id, branchID: branchId, processedBySoftware: 0, phoneNotify: false, sendFax: false, sendSMS: false, firstCustomerOrder: false, preOrdered: 0, companyID: companyId, customerOrderAddress: selectedAddress! , customerOrderTaxes: [], customerOrderItem: customerOrderItem, invoiceOrderDetailID: "false", cardOption: "false")
+            customerOrder = CustomerOrder.init(id: 0, customerType: customer.customerType, transID: transId, ipAddress: customer.ipAddress, orderDate: orderDate, specialInstructions: specialInstruction, customerPhone: customer.phone, customerFirstName: customer.firstName, customerLastName: customer.lastName, orderStatus: "PENDING", billingStatus: "false", printingStatus: "false", creditStatus: "false", orderType: oderType, paymentType: paymentType, orderTime: "ASAP (Around 75 Minutes)", promoCode: "false", sitePreference: "false", paymentGateway: "false", paymentGatewayReference: "false", orderConfirmationStatus: "PENDING", orderConfirmationStatusMessage: "AUTOCONFIRMED", deliveryCharge: 0, surCharge: 0.0, amount: subTotal, subTotal: subTotal, orderDiscount: 0.0, promoCodeDiscount: 0.0, orderCredit: "false", customerID: customer.id, branchID: branchId, processedBySoftware: 0, phoneNotify: false, sendFax: false, sendSMS: false, firstCustomerOrder: false, preOrdered: 0, companyID: companyId, customerOrderAddress: selectedAddress! , customerOrderTaxes: [], customerOrderItem: customerOrderItem, invoiceOrderDetailID: "false", cardOption: "false")
             
             
                performSegue(withIdentifier: "checkout2Summary", sender: self)
@@ -134,38 +127,13 @@ class CheckOutVC: BaseViewController {
             }
             
         }) { (error) in
-            //self.dismissHUD()
+           
             self.stopActivityIndicator()
             self.showAlert(title: Strings.error, message: Strings.somethingWentWrong)
         }
         
-//       let url = URL(string: "http://35.243.235.232:8082/rest/transid/new")
-//
-//
-//        let session = URLSession.shared
-//        session.dataTask(with: url!) { (data, response, error) in
-//            if let response = response {
-//                print(response)
-//            }
-//            if let data = data {
-//                do {
-//                    self.transId  = String(data: data, encoding: String.Encoding.utf8)!
-//                    print(self.transId)
-//                } catch {
-//                    print(error)
-//                }
-//
-//            }
-//            }.resume()
-        
 return transId
     }
-        
-    
-    //end of GetData
-
-    
-
 
     func currentDateTime () -> String {
         let formatter = DateFormatter()
@@ -177,8 +145,54 @@ return transId
         formatter.dateFormat = "hh:mm:ss"
         return (formatter.string(from: Date()) as NSString) as String
     }
+    func getUser() {
+        self.startActivityIndicator()
+        if let Id = UserDefaults.standard.object(forKey: "customerId") as? Int{
+            customerId = Id
+            let path = URL(string: Path.customerUrl + "/\(customerId)")
+            let session = URLSession.shared
+            let task = session.dataTask(with: path!) { data, response, error in
+                print("Task completed")
+                
+                guard data != nil && error == nil else {
+                    print(error?.localizedDescription)
+                    return
+                }
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? NSDictionary
+                    if let parseJSON = json {
+                        
+                        let jsonData = try JSONSerialization.data(withJSONObject: parseJSON, options: .prettyPrinted)
+                        let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
+                        let jsonData1 = encodedObjectJsonString.data(using: .utf8)
+                        self.customer = try JSONDecoder().decode(CustomerDetail.self, from: jsonData1!)
+                        DispatchQueue.main.async {
+                            self.userName = self.customer.firstName
+                            self.userEmail = self.customer.email
+                            self.userPhone = self.customer.phone
+                            self.userArray.append(self.userName)
+                            self.userArray.append(self.userEmail)
+                            self.userArray.append(self.userPhone)
+                            self.tblCheckOut.reloadData()
+                            self.stopActivityIndicator()
+                        }
+                        
+                    }
+                    
+                } catch let parseError as NSError {
+                    print("JSON Error \(parseError.localizedDescription)")
+                }
+            }
+            
+            task.resume()
+        }
+    }
+    
     
 }
+
+
+
 extension CheckOutVC : UITableViewDelegate, UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -416,11 +430,6 @@ extension CheckOutVC: PromoCodeDelegate {
 }
 extension CheckOutVC: addAddressDelegate{
     func didTappedAddressButton(cell: DeliveryAddress) {
-//        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-//        let vc : UIViewController = storyboard.instantiateViewController(withIdentifier: "AddressVC") as! AddressVC
-//        self.present(vc, animated: true, completion: nil)
-        //performSegue(withIdentifier: "checkout2address", sender: self)
-             
         let userAddress = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddressVC")
         userAddress.title = "User Address"
         self.navigationController?.pushViewController(userAddress, animated: true)

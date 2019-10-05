@@ -12,7 +12,7 @@ class CompleteSummeryVC: BaseViewController {
 
     
     var sectionTitle = ["","Route","Order Summery","Detail","Contact Support"]
-    var sectionOneArrayTitle = ["Sub Total","Order Number", "Order Time"]
+    var sectionOneArrayTitle = ["Sub Total","Sur Charge","GST","Discount","Order Number", "Order Time"]
     var sectionOneArrayValue:[String]!
     var routeLogo: [UIImage] = [UIImage(named: "restaurant")! , UIImage(named: "location1")!]
     var routeArray:[String]!
@@ -50,7 +50,7 @@ class CompleteSummeryVC: BaseViewController {
                restuarentAddress  = branch.addressLine1
             
         }
-        sectionOneArrayValue = ["\(orderSummery.subTotal)","\(orderSummery.id)","\(orderSummery.orderDate)"]
+        sectionOneArrayValue = ["\(orderSummery.subTotal)","\(orderSummery.surCharge)","\(orderSummery.customerOrderTaxes[0].taxAmount)","\(orderSummery.orderDiscount)","\(orderSummery.id)","\(orderSummery.orderDate)"]
         routeArray = ["\(restuarentAddress ?? "")","\(orderSummery.customerOrderAddress.customerOrderAddressFields[0].fieldValue + orderSummery.customerOrderAddress.customerOrderAddressFields[1].fieldValue + orderSummery.customerOrderAddress.customerOrderAddressFields[2].fieldValue + orderSummery.customerOrderAddress.customerOrderAddressFields[3].fieldValue)"]
         
     }

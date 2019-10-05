@@ -13,7 +13,10 @@ class SplashVC: BaseViewController {
 
     @IBOutlet weak var verticalCenterConstraint: NSLayoutConstraint!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-
+    
+    
+    public var companyDetailObject: CompanyDetails!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -34,6 +37,7 @@ class SplashVC: BaseViewController {
                 
                 print(companyDetails)
                 self.saveCompanyObject(Object: companyDetails, key: "SavedCompany")
+                self.companyDetailObject = companyDetails
                 UIView.animate(withDuration: 1, delay: 0, options: .curveEaseInOut, animations: {
                     //self.verticalCenterConstraint.constant = (UIScreen.main.bounds.height/2 - 100) - (180+216)
                     self.view.layoutIfNeeded()
@@ -69,7 +73,7 @@ struct CompanyDetails: Codable {
     let id: Int
     let name, description: String
     let locationWebLogoURL: String
-    let iOSAppURL: String
+    let iOSAppURL: String?
     let androidAppURL: String
     let status, archive, clientSendPushNotification: Int
     let salesCompanyName, salesCompanyWebsite: String
@@ -78,7 +82,7 @@ struct CompanyDetails: Codable {
     let country: Country
     let companyType, deliveryZoneType: CompanyTypeClass
     let companyTemplate: CompanyTemplate
-    let listingRedirection: String
+    let listingRedirection: String?
     let companyLocales: [CompanyLocale]
     let addressFieldRules: [AddressFieldRule]
 

@@ -29,6 +29,7 @@ class AFManager {
 
             if responseObject.result.isSuccess {
                 let resJson = JSON(responseObject.result.value!)
+                
                 self.printResponse(resJson)
                 let errorExists = resJson["error"].exists()
                 success(resJson, errorExists)

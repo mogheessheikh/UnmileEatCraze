@@ -58,8 +58,10 @@ public class NetworkManager {
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
             if let response = response {
-                print(response)
+                    print(response)
             }
+           
+                
             
             if let data = data {
                 do {
@@ -67,11 +69,13 @@ public class NetworkManager {
                     let jsonData = try JSONSerialization.data(withJSONObject: json as Any, options: .prettyPrinted)
                     let encodedObjectJsonString = String(data: jsonData, encoding: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
                     let jsonData1 = encodedObjectJsonString.data(using: .utf8)
-//                    self.customerAddress = try JSONDecoder().decode(Address.self, from: jsonData1!)
-//                    var alreadyAddress = self.getAlreadyAddress()
-//                    alreadyAddress.append(self.customerAddress!)
-//
-//                    self.saveAddress(allAddress: alreadyAddress)
+                    if let httpResponse = response as? HTTPURLResponse {
+                        print("error \(httpResponse.statusCode)")
+                        if httpResponse.statusCode == 200{
+                            restResponse = true
+                            
+                        }
+                    }
                     
                 } catch {
                     print(error)
@@ -1036,20 +1040,20 @@ extension NetworkManager {
 }
 
 enum ServerURLs {
-    static let devURL           = "http://35.243.235.232:8082/rest"
-    static let productionURL    = "http://35.153.13.41:8082/rest"
-    static let stagingURL       = ""
+    static let stagingURL           = "http://130.211.192.1:8082/rest"
+    static let productionURL        = "http://35.153.13.41:8082/rest"
+    static let googleServerURL      = "http://35.243.235.232:8082/rest"
 
 }
 
 enum Path {
-    static let companyUrl                = ServerURLs.devURL + "/company"
-    static let companyCityUrl            = ServerURLs.devURL + "/companycity"
-    static let branchUrl                 = ServerURLs.devURL + "/branch"
-    static let menuUrl                   = ServerURLs.devURL + "/menu"
-    static let customerUrl               = ServerURLs.devURL + "/customer"
-    static let addressUrl                = ServerURLs.devURL + "/address"
-    static let transIdUrl                = ServerURLs.devURL + "/transid"
-    static let customerOrderUrl          = ServerURLs.devURL + "/customer-order"
+    static let companyUrl                = ServerURLs.stagingURL + "/company"
+    static let companyCityUrl            = ServerURLs.stagingURL + "/companycity"
+    static let branchUrl                 = ServerURLs.stagingURL + "/branch"
+    static let menuUrl                   = ServerURLs.stagingURL + "/menu"
+    static let customerUrl               = ServerURLs.stagingURL + "/customer"
+    static let addressUrl                = ServerURLs.stagingURL + "/address"
+    static let transIdUrl                = ServerURLs.stagingURL + "/transid"
+    static let customerOrderUrl          = ServerURLs.stagingURL + "/customer-order"
 }
 

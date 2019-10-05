@@ -10,3 +10,5 @@ import Foundation
 
 public var companyId = 52
 public var customerId = 0
+public var restResponse = false
+

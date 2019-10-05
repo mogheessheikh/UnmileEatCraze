@@ -32,7 +32,7 @@ class NewItemDetailVC: BaseViewController {
     let cartBag = SSBadgeButton()
     var bag = 0
     var qNumber = 1
-    var qPrice = 0.0
+    var itemPurchaseSubTotal = 0.0
     var selectedSingleRows = [String:IndexPath]()
     var rowsWhichAreChecked = [NSIndexPath]()
     var radioWhichAreChecked = [NSIndexPath.init(row: 0, section: 0)]
@@ -72,11 +72,11 @@ class NewItemDetailVC: BaseViewController {
         }
         print(mustCount,"Moghees",optionalCount)
         
-        for i in 0...mustCount-1{
+        for _ in 0..<mustCount{
             
             mustArray.add("")
         }
-        for i in 0...optionalCount{
+        for _ in 0..<optionalCount{
             
             optionalArray.add("")
         }
@@ -224,12 +224,9 @@ extension NewItemDetailVC :  UITableViewDataSource,UITableViewDelegate{
 
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-          let previusSelectedCellIndexPath = self.addSelectedCellWithSection(indexPath)
-        
-        let cell = self.tblOptionGroup.cellForRow(at: indexPath) as! section3Cell
-      
         if (indexPath.section >= 2 && indexPath.section<=(product.optionGroups.count+1)){
-            
+            let previusSelectedCellIndexPath = self.addSelectedCellWithSection(indexPath)
+             let cell = self.tblOptionGroup.cellForRow(at: indexPath) as! section3Cell
              if(product.optionGroups[indexPath.section-2].maxChoice <= 1)
                 {
                     
@@ -248,7 +245,7 @@ extension NewItemDetailVC :  UITableViewDataSource,UITableViewDelegate{
                         mustArray.replaceObject(at: indexPath.section-2, with:oG)
                         tblOptionGroup.deselectRow(at: previusSelectedCellIndexPath!, animated: true)
                         
-            tblOptionGroup.reloadData()
+                        tblOptionGroup.reloadData()
                 }
             else{
                         cell.radio_check_button.setImage(UIImage(named: "radio-button-check"),for:UIControl.State.normal)
@@ -296,6 +293,9 @@ extension NewItemDetailVC :  UITableViewDataSource,UITableViewDelegate{
             
             }
                     }
+        else{
+            tblOptionGroup.allowsSelection = false
+        }
     
         }
     
@@ -316,12 +316,21 @@ extension NewItemDetailVC: radio_Check_ButtonDelegate{
 
 extension NewItemDetailVC: itemDelegate{
     func didPressAddItem(cell: section6Cell) {
-        if(mustArray.contains("")){
+        if(mustArray.contains("") && optionGroup.count > 0 ){
             showAlert(title: "Selection is missing", message: "Must choose required selection")
         }
         else{
-            customerOptionGroupArray += mustArray as! Array<CustomerOptionGroup>
-        
+            
+            if (optionGroup.count > 0){
+                customerOptionGroupArray += mustArray as! Array<CustomerOptionGroup>
+                
+                for (j,i) in customerOptionGroupArray.enumerated(){
+                    
+                    itemPurchaseSubTotal += Double(i.options[j].price)
+                }
+                
+            }
+            
         cProduct = CustomerProduct.init(id: product.id, code: product.code, name: product.name, description: product.description, productPhotoURL: product.productPhotoURL ?? "logo", price: Int(product!.price), position: product.position, status: product.status, archive: product.archive, optionGroups: customerOptionGroupArray)
           
         var alreadyItems = getAlreadyCartItems()
@@ -336,7 +345,7 @@ extension NewItemDetailVC: itemDelegate{
                     }
                     
                     alreadyItems[i].quantity = qNumber
-                    alreadyItems[i].purchaseSubTotal = Int(qPrice)
+                    alreadyItems[i].purchaseSubTotal = Int(itemPurchaseSubTotal)
                     alreadyItems[i].instructions = "No Instruction"
 //                    alreadyItems[i].product.name = product.name
                     alreadyItems[i].customerOrderItemOptions = customerOrderItemOptionArray
@@ -349,21 +358,14 @@ extension NewItemDetailVC: itemDelegate{
             // add new item in cart
         else{
             items?.quantity = qNumber
-            items?.purchaseSubTotal = Int(qPrice)
+            items?.purchaseSubTotal = Int(itemPurchaseSubTotal)
             items?.instructions = "No Instruction"
             print(String.init(format: "count before adding item is %i", alreadyItems.count))
-            totalPrice += qPrice
+            itemPurchaseSubTotal = itemPurchaseSubTotal + Double(cProduct.price)
+            
             //"v1px5bld"
             
-            items =  CustomerOrderItem.init(id: 0, orderItemID: "v1px5bld" , forWho: "", instructions: "No Instruction", quantity: qNumber, purchaseSubTotal: Int(totalPrice), product: cProduct, customerOrderItemOptions: customerOrderItemOptionArray )
-            
-    //            items?.orderItemID = "v1px5bld"
-    //                items?.forWho = "moghees"
-    //                items?.instructions = "No Instruction"
-    //                items?.quantity = qNumber
-    //                items?.purchaseSubTotal = Int(totalPrice)
-    //                items?.product = cProduct
-    //                items?.customerOrderItemOptions = customerOrderItemOptionArray
+            items =  CustomerOrderItem.init(id: 0, orderItemID: "v1px5bld" , forWho: "", instructions: "No Instruction", quantity: qNumber, purchaseSubTotal: Int(itemPurchaseSubTotal), product: cProduct, customerOrderItemOptions: customerOrderItemOptionArray )
             alreadyItems.append(items!)
             
             saveItems(allItems: alreadyItems)
@@ -374,7 +376,8 @@ extension NewItemDetailVC: itemDelegate{
         UserDefaults.standard.set(bag, forKey: "bag")
         cartBag.badge = String(bag)
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: cartBag)]
-    }
+        showAlert(title: "item is Added in cart", message: "")
+        }
         
     }
 }
@@ -382,17 +385,14 @@ extension NewItemDetailVC: itemDelegate{
 extension NewItemDetailVC : itemPlusMinusDelegate{
     func didTappedAddButton(cell: section4Cell) {
         qNumber += 1
-        //qPrice = qPrice + orignalPrice
        cell.quantity.text = String(qNumber)
-        //price.text = String(qPrice)
     }
     
     func didTappedMinusButton(cell: section4Cell) {
         if qNumber  > 1 {
             qNumber -= 1
-          //  qPrice = qPrice - orignalPrice
             cell.quantity.text = String(qNumber)
-           // price.text = String(qPrice)
+          
         }
     }
 }

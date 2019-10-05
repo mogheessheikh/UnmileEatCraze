@@ -173,7 +173,7 @@ extension ContainerVC : UITableViewDataSource, UITableViewDelegate{
             
         else if (indexPath.section == 1 && indexPath.row == 0)
         {
-            logOutAlert(title: "Do You Want to LogOut?", message: "You will not able to place any oder",dataTable: tblSlideMenu )
+            logOutAlert(title: "Do You Want to LogOut?", message: "You will not able to place any order",dataTable: tblSlideMenu )
         }
         else if (indexPath.section == 1 && indexPath.row == 1)
         {
@@ -218,7 +218,7 @@ extension ContainerVC : UITableViewDataSource, UITableViewDelegate{
         
         else if (indexPath.section == 1 && indexPath.row == 7)
         {
-            let feedBack = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "Terms_Conditions")
+            let feedBack = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "Terms_Conditions") as! Terms_Conditions
             self.navigationController?.pushViewController(feedBack, animated: true)
             
         }
@@ -227,8 +227,8 @@ extension ContainerVC : UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = Bundle.main.loadNibNamed("SideMenuHeaderViewCell", owner: self, options: nil)?.first as! SideMenuHeaderViewCell
         
-         if UserDefaults.standard.object(forKey: "customerName") != nil{
-            customerCheck = getCustomerObject("savedCustomer")
+         if UserDefaults.standard.object(forKey: "SavedCustomer") != nil{
+            customerCheck = getCustomerObject("SavedCustomer")
         }
         if customerCheck != nil  {
             headerView.imgHeader.image = UIImage(named: "user-1")!

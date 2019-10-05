@@ -53,7 +53,7 @@ class UserRegistrationVC: BaseViewController {
     func checkEmail(_ email:String ){
         startActivityIndicator()
         
-        let URL_USER_LOGIN = "http://35.243.235.232:8082/rest/customer/find-customer-id-companyid?email=\(email)&customerType=MEMBER&companyID=52"
+        let URL_USER_LOGIN = Path.customerUrl+"/find-customer-id-companyid?email=\(email)&customerType=MEMBER&companyID=\(companyId)"
         
         let parameters: Parameters=[
             "userName":emailField.text!,
@@ -107,18 +107,59 @@ class UserRegistrationVC: BaseViewController {
         
     }
     
-    
+//    func registerNewUser(){
+//                let registrationDate = currentDateTime()
+//                let ipAddress = getDeviceIP()
+//                let api = Path.customerUrl + "/create"
+//        let params = ["companyId":companyId,
+//                                                    "customerType":"MEMBER",
+//                                      "firstName": firstName.text!,
+//                                      "internalInfo":"",
+//                                      "ipAddress": ipAddress,
+//                                      "lastName": lastName.text!,
+//                                      "email": emailField.text!,
+//                                      "password": passwordField.text!,
+//                                      "phone": phoneNumber.text!,
+//                                      "mobile": phoneNumber.text!,
+//                                      "promotionEmail":"false",
+//                                      "promotionSms":"false",
+//                                      "registrationDate": registrationDate,
+//                                      "salt":"",
+//                                      "salutation":"",
+//                                      "status":1,
+//                                      ] as [String: Any]
+//
+//
+//        Alamofire.request(api, method: .post, parameters: params, encoding: URLEncoding.default).responseJSON {response in
+//            var err:Error?
+//            switch response.result {
+//            case .success(let json):
+//                print(json)
+//                // update UI on main thread
+//                DispatchQueue.main.async {
+//                    let alertController = UIAlertController(title: "REGISTRATION SUCCESSFUL!", message: nil, preferredStyle: .alert);
+//
+//                    alertController.addAction(UIAlertAction(title: "OK", style: .default,handler: nil));
+//
+//                    self.present(alertController, animated: true, completion: nil)
+//                }
+//            case .failure(let error):
+//                err = error
+//                print(err)
+//            }
+//        }
+//    }
     func registerNewUser() {
-        
+
         let registrationDate = currentDateTime()
         let ipAddress = getDeviceIP()
-        
+
         let myUrl = URL(string: Path.customerUrl + "/create")
         var request = URLRequest(url: myUrl!)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "content-type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
+
         let postString = ["companyId":companyId,
                           "customerType":"MEMBER",
                           "firstName": firstName.text!,
@@ -144,55 +185,62 @@ class UserRegistrationVC: BaseViewController {
             return
         }
         let task = URLSession.shared.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
-            
+
             if error != nil
             {
                 self.showAlert(title: "Request Error", message: "Could not successfully perform this request. Please try again later")
-                
+
                 print("error=\(String(describing: error))")
                 return
             }
-            
+
             // Let's convert response sent from a server side code to a NSDictionary object:
-            
+
             do {
                 let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? NSDictionary
-                
+
                 if let parseJSON = json {
-                    
+
                     DispatchQueue.main.async {
                     let userId = parseJSON["firstName"] as? String
                     print("User id: \(String(describing: userId!))")
-                    
+
                     if (userId?.isEmpty)!
                     {
                         // Display an Alert dialog with a friendly error message
                         self.showAlert(title: "Request Error", message: "Could not successfully perform this request. Please try again later")
                         return
                     } else {
-                        self.showAlert(title: "SignIn Successfully", message: "Successfully Registered a New Account. Please proceed to Sign in")
+                        self.stopActivityIndicator()
+                        self.firstName.text = ""
+                        self.lastName.text = ""
+                        self.emailField.text = ""
+                        self.passwordField.text = ""
+                        self.phoneNumber.text = ""
+                        self.showAlert(title: "SignUP Successfully", message: "Successfully Registered a New Account. Please proceed to Sign in")
                         
+
                     }
-                    
+
                     }
-                    
+
                 }
                 else {
                     //Display an Alert dialog with a friendly error message
                     //                        self.showAlert(title: "Request Error", message: "Could not successfully perform this request. Please try again later")
-                    
+
                 }
             } catch {
-                
+
                 // self.removeActivityIndicator(activityIndicator: myActivityIndicator)
-                
+
                 // Display an Alert dialog with a friendly error message
                 self.showAlert(title: "Request Error", message: "Could not successfully perform this request. Please try again later")
-                
+
                 print(error)
             }
         }
-        
+
         task.resume()
     }
     

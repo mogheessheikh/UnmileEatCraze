@@ -22,9 +22,9 @@ class PlaceOrderVC: BaseViewController {
     var selectedAddress : CustomerOrderAddress!
     var branch: Branch!
     var branchWrapper : BranchWrapperAppList!
-    var  surCharges = 0.0
+    var surCharges = 0.0
     var sectionTitle = ["","Route","Order Summery","Detail","Contact Support"]
-    var sectionOneArrayTitle = ["Sub Total","Order Time"]
+    var sectionOneArrayTitle = ["Total","Sur Charge","GST","Discount","Sub Total","Order Time"]
     var sectionOneArrayValue:[String]!
     var routeLogo: [UIImage] = [UIImage(named: "restaurant")! , UIImage(named: "location1")!]
     var routeArray:[String]!
@@ -33,22 +33,30 @@ class PlaceOrderVC: BaseViewController {
     var paymentMethod : [PaymentMethod]!
     var customerOrderTax : [CustomerOrderTax]!
     var orderDiscount = 0.0
-    
+    var taxAmount = 0.0
     override func viewDidLoad() {
+        
         super.viewDidLoad()
-
-      selectedAddress = customerOrder.customerOrderAddress
-    
-         itemSummery = getAlreadyCartItems()
-     sectionOneArrayValue = ["\(getTotalPriceFromCart())","\(currentDateTime())"]
-    
+        
+        
+        itemSummery = getAlreadyCartItems()
         if let savedBranch = UserDefaults.standard.object(forKey: "branchAddress") as? Data  {
             let decoder = JSONDecoder()
-                branch = try? decoder.decode(Branch.self, from: savedBranch)
-                restuarentAddress  = branch.addressLine1
-          paymentMethod = branch.paymentMethods
+            branch = try? decoder.decode(Branch.self, from: savedBranch)
+            restuarentAddress  = branch.addressLine1
+            paymentMethod = branch.paymentMethods
             
         }
+        
+        
+        selectedAddress = customerOrder.customerOrderAddress
+        customerOrderTax = calculateTaxes(restbranch: branch, customerOrder: customerOrder)
+        surCharges = chargeSurcharge(customerOrder:customerOrder, paymentMethod: paymentMethod)
+        orderDiscount = calculateDiscounts(branch: branch, customerOrder: customerOrder)
+        finalsubTotal = getTotalPriceFromCart() + surCharges + taxAmount + orderDiscount
+        sectionOneArrayValue = ["\(customerOrder.subTotal)","\(surCharges)","\(taxAmount)","\(orderDiscount)","\(finalsubTotal)","\(currentDateTime())"]
+    
+       
     
         routeArray = ["\(restuarentAddress ?? "")","\(selectedAddress!.customerOrderAddressFields[0].fieldValue + selectedAddress!.customerOrderAddressFields[1].fieldValue + selectedAddress!.customerOrderAddressFields[2].fieldValue + selectedAddress!.customerOrderAddressFields[3].fieldValue)"]
     
@@ -56,11 +64,7 @@ class PlaceOrderVC: BaseViewController {
         tblOrderSummery.register(UINib(nibName: "OrderItemsSummery", bundle: Bundle.main), forCellReuseIdentifier: "itemcell")
         tblOrderSummery.register(UINib(nibName: "OrderDetail", bundle: Bundle.main), forCellReuseIdentifier: "detailcell")
         tblOrderSummery.register(UINib(nibName: "ContactSupport", bundle: Bundle.main), forCellReuseIdentifier: "contactcell")
-        
-        
-         customerOrderTax = calculateTaxes(restbranch: branch, customerOrder: customerOrder)
-         surCharges = chargeSurcharge(customerOrder:customerOrder, paymentMethod: paymentMethod)
-        // orderDiscount = calculateDiscounts(branch: branch, customerOrder: customerOrder)
+
     }
     
 
@@ -71,6 +75,9 @@ class PlaceOrderVC: BaseViewController {
     }
     
     @IBAction func tappedToPlaceOrder(_ sender: Any) {
+       
+        startActivityIndicator()
+        UIApplication.shared.beginIgnoringInteractionEvents()
         
         // customerOrder.customerOrderItem conversion into json data
         let jsonData = try! JSONEncoder().encode(customerOrder.customerOrderItem) //Data
@@ -137,8 +144,8 @@ class PlaceOrderVC: BaseViewController {
                    "phoneNotify":false,
                    "sendFax":false,
                    "sendSms":false,
-                   "specialInstructions":"",
-                   "subTotal": "\(customerOrder.subTotal)",
+                   "specialInstructions":"\(customerOrder.specialInstructions)",
+                   "subTotal": "\(finalsubTotal)",
                    "transId":"\(customerOrder.transID)",
                    "surCharge": surCharges,
                    "companyId": customerOrder.companyID
@@ -153,8 +160,6 @@ class PlaceOrderVC: BaseViewController {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         do {
             let jsoncheck =  try JSONSerialization.data(withJSONObject: postString , options: .prettyPrinted)
-            
-           //getRequst(paramss: postString, path: "http://35.243.235.232:8082/rest/customer-order/create")
             
             request.httpBody = try JSONSerialization.data(withJSONObject: postString , options: .prettyPrinted)
         } catch let error {
@@ -183,16 +188,14 @@ class PlaceOrderVC: BaseViewController {
                     let jsonData1 = encodedObjectJsonString.data(using: .utf8)
                     let customerOrder = try JSONDecoder().decode(CustomerOrder.self, from: jsonData1!)
                     
-                    //self.saveCustomerOrder(obj: customerOrder!, key: "savedCustomerOrder" )
+        
                     
                     DispatchQueue.main.async {
+                        self.stopActivityIndicator()
+                        UIApplication.shared.endIgnoringInteractionEvents()
+                       self.orderPlaceAlert(title: "Order Placed", message: "Your Order is Places")
                         self.saveCustomerOrder(obj: customerOrder, key: "savedCustomerOrder" )
-                        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                        let vc : UIViewController = storyboard.instantiateViewController(withIdentifier: "CompleteSummeryVC") as! CompleteSummeryVC
-                        self.present(vc, animated: true, completion: nil)
-                        //                        let next:CompleteSummeryVC = self.storyboard?.instantiateViewController(withIdentifier: "CompleteSummeryVC") as! CompleteSummeryVC
-                        //                        self.navigationController?.pushViewController(next, animated: true)
-                        
+                       
                         
                         print(self.customerOrder.amount)
                     }
@@ -201,7 +204,7 @@ class PlaceOrderVC: BaseViewController {
                 else {
                     
                     //Display an Alert dialog with a friendly error message
-                    //                        self.showAlert(title: "Request Error", message: "Could not successfully perform this request. Please try again later")
+             self.showAlert(title: "Request Error", message: "Could not successfully perform this request. Please try again later")
                     
                 }
             } catch {
@@ -217,25 +220,7 @@ class PlaceOrderVC: BaseViewController {
         
         task.resume()
     }
-//    func getRequst(paramss: [String : Any] , path: String){
-//
-//        NetworkManager.getDetails(path: path, params: paramss, success: { (json, isError) in
-//
-//            do {
-//                let jsonData =  try json.rawData()
-//                let customerDetails = try JSONDecoder().decode(CustomerDetail.self, from: jsonData)
-//
-//                print(customerDetails)
-//
-//                self.savedCustomerAddress(obj: customerDetails.addresses, key: "customerAddress")
-//
-//            } catch let myJSONError {
-//                print(myJSONError)
-//                self.showAlert(title: Strings.error, message: Strings.somethingWentWrong)
-//            }
-//
-//        }, failure: (Error) -> Void)
-//    }
+
     func  chargeSurcharge(customerOrder: CustomerOrder,  paymentMethod: [PaymentMethod])-> Double {
         
         for paymentmethod:PaymentMethod in paymentMethod{
@@ -266,7 +251,7 @@ class PlaceOrderVC: BaseViewController {
         var rate = 0.0
         var ChargeMode = 0
         var customerOrderTaxes = [CustomerOrderTax].self
-        var taxAmount = 0.0
+       
         for  tax:Tax  in restbranch.taxes {
             if (tax.orderType.name == customerOrder.orderType) || (tax.orderType.name == "\(OrderType.self)") {
     

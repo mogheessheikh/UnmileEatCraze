@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="zLi-2F-hRv">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="zLi-2F-hRv">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -346,22 +346,29 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Verify Code" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O3m-NI-C7h">
-                                <rect key="frame" x="87.5" y="48" width="145" height="35"/>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Update Password" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O3m-NI-C7h">
+                                <rect key="frame" x="50.5" y="48" width="219" height="35"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="29"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter your email to reset password" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TlI-MM-V7z">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter new password to reset" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TlI-MM-V7z">
                                 <rect key="frame" x="50" y="99" width="220" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="STk-bS-M3B"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="13"/>
                                 <color key="textColor" red="0.71764705880000002" green="0.71764705880000002" blue="0.72549019609999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter Email" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="A0b-v6-5XD">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Re-Type Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="S5c-xl-oL8">
+                                <rect key="frame" x="49" y="207" width="220" height="50"/>
+                                <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="New Password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="A0b-v6-5XD">
                                 <rect key="frame" x="50" y="149" width="220" height="50"/>
                                 <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
@@ -369,10 +376,10 @@
                                 </constraints>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OE8-ka-7cv">
-                                <rect key="frame" x="50" y="215" width="220" height="50"/>
+                                <rect key="frame" x="50" y="286" width="220" height="50"/>
                                 <color key="backgroundColor" red="1" green="0.63137254899999995" blue="0.054901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="A9Y-Y4-uid"/>
@@ -394,20 +401,25 @@
                         <constraints>
                             <constraint firstItem="A0b-v6-5XD" firstAttribute="top" secondItem="TlI-MM-V7z" secondAttribute="bottom" constant="15" id="3h4-3F-rgF"/>
                             <constraint firstItem="A0b-v6-5XD" firstAttribute="leading" secondItem="xGN-D5-4uj" secondAttribute="leading" constant="50" id="Hly-lv-nDF"/>
+                            <constraint firstItem="S5c-xl-oL8" firstAttribute="top" secondItem="A0b-v6-5XD" secondAttribute="bottom" constant="8" symbolic="YES" id="Jgx-jC-Uvc"/>
                             <constraint firstItem="xGN-D5-4uj" firstAttribute="trailing" secondItem="TlI-MM-V7z" secondAttribute="trailing" constant="50" id="JqB-oD-YUz"/>
-                            <constraint firstItem="OE8-ka-7cv" firstAttribute="top" secondItem="A0b-v6-5XD" secondAttribute="bottom" constant="16" id="NUP-Gz-WAl"/>
+                            <constraint firstItem="OE8-ka-7cv" firstAttribute="top" secondItem="A0b-v6-5XD" secondAttribute="bottom" constant="87" id="NUP-Gz-WAl"/>
                             <constraint firstItem="O3m-NI-C7h" firstAttribute="centerX" secondItem="wOg-cP-MmS" secondAttribute="centerX" id="OiZ-e5-OAk"/>
                             <constraint firstItem="TlI-MM-V7z" firstAttribute="leading" secondItem="xGN-D5-4uj" secondAttribute="leading" constant="50" id="WLb-Lt-kpC"/>
+                            <constraint firstItem="S5c-xl-oL8" firstAttribute="leading" secondItem="xGN-D5-4uj" secondAttribute="leading" constant="49" id="cLd-w2-X9g"/>
                             <constraint firstItem="xGN-D5-4uj" firstAttribute="trailing" secondItem="OE8-ka-7cv" secondAttribute="trailing" constant="50" id="fwq-G1-HC9"/>
                             <constraint firstItem="TlI-MM-V7z" firstAttribute="top" secondItem="O3m-NI-C7h" secondAttribute="bottom" constant="16" id="hM5-un-POe"/>
                             <constraint firstItem="OE8-ka-7cv" firstAttribute="leading" secondItem="xGN-D5-4uj" secondAttribute="leading" constant="50" id="kFC-cW-gT2"/>
+                            <constraint firstItem="OE8-ka-7cv" firstAttribute="top" secondItem="S5c-xl-oL8" secondAttribute="bottom" constant="29" id="qDf-ir-Xza"/>
                             <constraint firstItem="xGN-D5-4uj" firstAttribute="trailing" secondItem="A0b-v6-5XD" secondAttribute="trailing" constant="50" id="qTj-lm-icB"/>
-                            <constraint firstItem="OE8-ka-7cv" firstAttribute="centerY" secondItem="wOg-cP-MmS" secondAttribute="centerY" id="z25-xm-21Z"/>
+                            <constraint firstItem="xGN-D5-4uj" firstAttribute="trailing" secondItem="S5c-xl-oL8" secondAttribute="trailing" constant="51" id="x9U-w9-kSP"/>
+                            <constraint firstItem="OE8-ka-7cv" firstAttribute="centerY" secondItem="wOg-cP-MmS" secondAttribute="centerY" constant="71" id="z25-xm-21Z"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xGN-D5-4uj"/>
                     </view>
                     <connections>
-                        <outlet property="emailField" destination="A0b-v6-5XD" id="sRD-Sn-rP9"/>
+                        <outlet property="newPassword" destination="A0b-v6-5XD" id="35h-RD-04u"/>
+                        <outlet property="retypePassword" destination="S5c-xl-oL8" id="Unt-wJ-Nq0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="b2D-OZ-Y02" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -416,6 +428,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="logo" width="483" height="108"/>
+        <image name="logo" width="483.5" height="108"/>
     </resources>
 </document>
